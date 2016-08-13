@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdzn.fuzhuxian.api.domain.dao.network.NetWorkDao">
+	<resultMap id="base_result_map"
+		type="com.sdzn.fuzhuxian.api.domain.model.network.NetWork">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="url" jdbcType="VARCHAR" property="url" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="mac" jdbcType="VARCHAR" property="mac" />
+		<result column="type" jdbcType="BIT" property="type" />
+		<result column="imei" jdbcType="VARCHAR" property="imei" />
+	</resultMap>
+	<sql id="base_column_list">
+		id, url, name, mac, type, imei
+	</sql>
+	<select id="selectByImei" resultMap="base_result_map"
+		parameterType="java.lang.String">
+		SELECT
+		<include refid="base_column_list" />
+		FROM
+		app_network_config
+		where imei = #{imei,jdbcType=VARCHAR}
+	</select>
+	<select id="selectById" parameterType="java.lang.Integer"
+		resultMap="base_result_map">
+		SELECT
+		<include refid="base_column_list" />
+		FROM app_network_config
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<insert id="insert" parameterType="com.sdzn.fuzhuxian.api.domain.model.network.NetWork"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into
+		app_network_config
+		(id, url, name,
+		mac, type, imei)
+		values
+		(#{id,jdbcType=INTEGER},
+		#{url,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{mac,jdbcType=VARCHAR},
+		#{type,jdbcType=BIT},
+		#{imei,jdbcType=VARCHAR})
+	</insert>
+
+	<update id="updateById" parameterType="com.sdzn.fuzhuxian.api.domain.model.network.NetWork">
+		update app_network_config
+		<set>
+			<if test="url != null">
+				url = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="mac != null">
+				mac = #{mac,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=BIT},
+			</if>
+			<if test="imei != null">
+				imei = #{imei,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<delete id="deleteById" parameterType="java.lang.Integer">
+		delete from
+		app_network_config
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+
+</mapper>

@@ -1,0 +1,77 @@
+/**
+ * 文件名：SchoolStudentService
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述： 学校管理员
+ * 修改人：王宁
+ * 修改时间：2016-07-14
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.service.user;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sdzn.fuzhuxian.api.domain.dao.user.SchoolStudentDao;
+import com.sdzn.fuzhuxian.api.domain.model.user.SchoolStudent;
+
+/**
+ * SchoolStudentService
+ * 
+ * 学校管理员
+ * 
+ * @author 王宁 2016年7月14日
+ * @see
+ * @since 1.0
+ */
+@Service
+public class SchoolStudentService {
+	@Autowired
+	private SchoolStudentDao studentDao;
+
+	/**
+	 * 查询学校管理员列表
+	 * 
+	 * @return
+	 */
+	public List<SchoolStudent> selectAll() {
+		System.out.println(studentDao);
+		return studentDao.selectAll();
+
+	}
+
+	/**
+	 * 添加管理员
+	 * 
+	 * @param schoolAdmin
+	 * @return
+	 */
+	public int insertStudent(SchoolStudent studnet) {
+		System.out.print(studentDao);
+		return studentDao.insert(studnet);
+	}
+
+	/**
+	 * 修改管理员账户
+	 * 
+	 * @param admin
+	 * @return
+	 */
+	public int updateStudent(SchoolStudent studnet) {
+		return studentDao.updateById(studnet);
+
+	}
+
+	/**
+	 * 删除管理员账号
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public int deleteStudent(Integer id) {
+		System.out.print(studentDao);
+		return studentDao.deleteById(id);
+
+	}
+}

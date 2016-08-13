@@ -1,0 +1,180 @@
+package com.bigaka.crm.customer.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.bigaka.crm.common.model.Code;
+import com.bigaka.crm.common.model.Constant.ComputeType;
+import com.bigaka.crm.common.model.ServiceResult;
+import com.bigaka.crm.common.util.DateUtil;
+import com.bigaka.crm.customer.dao.CustomerTagDao;
+import com.bigaka.crm.customer.model.CustomerTag;
+import com.bigaka.crm.service.assist.UniqueGenerate;
+import com.bigaka.crm.tag.service.TagService;
+
+/**
+ * 顾客标签管理
+ * @author Dylan_Tao
+ * @date 2015-12-02
+ * Copyright 2015 bigaka.com. All Rights Reserved. 
+ */
+@Service("customerTagService")
+public class CustomerTagServiceImpl implements CustomerTagService{
+	
+	private static final Log log = LogFactory.getLog(CustomerTagServiceImpl.class);
+	
+	@Autowired
+	private CustomerTagDao customerTagDao;
+	@Autowired
+	private UniqueGenerate uniqueGenerate;
+	/*@Autowired
+	private MethodCacheInterceptor methodCacheInterceptor;*/
+	@Autowired
+	private TagService tagService;
+
+	@Override
+	public ServiceResult<HashMap<Integer, List<CustomerTag>>> getCustomerTagMap(List<Integer> custIds) {
+		List<CustomerTag> tags = customerTagDao.getCustomerTagListExt(custIds);
+		HashMap<Integer, List<CustomerTag>> map = new HashMap<Integer, List<CustomerTag>>();
+		for(int i=0;i<tags.size();i++){
+			CustomerTag tag = tags.get(i);
+			if(tag!=null){
+				Integer custId = tag.getCustomerId();
+				List<CustomerTag> tagList = null;
+				if(custId!=null && map.containsKey(custId)){
+					tagList = map.get(custId);
+				}else{
+					tagList = new ArrayList<CustomerTag>();
+				}
+				tagList.add(tag);
+				map.put(custId, tagList);
+			}
+		}
+		return new ServiceResult<HashMap<Integer,List<CustomerTag>>>(Code.SUCCESS, null, map);
+	}
+
+	@Override
+	public ServiceResult<Boolean> batchSaveCustomerTag(List<Integer> customerIds, List<Long> tagIds) {
+		List<CustomerTag> custTagList = customerTagDao.getCustomerTagList(customerIds);
+		HashMap<Integer, List<Long>> custTagMap = new HashMap<Integer, List<Long>>();
+		for(int i=0; i<custTagList.size(); i++){
+			CustomerTag customerTag = custTagList.get(i);
+			Integer custId = customerTag.getCustomerId();
+			Long tagId = customerTag.getTagId();
+			List<Long> custTagIds = null;
+			if(custTagMap.containsKey(custId)){
+				custTagIds = custTagMap.get(custId);
+			}else{
+				custTagIds = new ArrayList<Long>();
+			}
+			custTagIds.add(tagId);
+			custTagMap.put(custId, custTagIds);
+		}
+		List<List<Object>> paramList = new ArrayList<List<Object>>(); 
+		Long time = DateUtil.getTime();
+		HashMap<Long, Integer> countMap = new HashMap<Long, Integer>();
+		for(int s= 0;s<customerIds.size();s++){
+			Integer custId = customerIds.get(s);
+			List<Long> custTagIds = custTagMap.get(custId);
+			List<Long> addTagIds = new ArrayList<Long>();
+			addTagIds.addAll(tagIds);
+			if(custTagIds!=null && custTagIds.size()>0){
+				addTagIds.removeAll(custTagIds);
+			}
+			if(addTagIds!=null && addTagIds.size()>0){
+				for(int u=0;u<addTagIds.size();u++){
+					List<Object> param = new ArrayList<Object>();
+					Long tagId = addTagIds.get(u);
+					param.add(uniqueGenerate.getId());
+					param.add(custId);
+					param.add(tagId);
+					param.add(time);
+					paramList.add(param);
+					if(countMap.containsKey(tagId)){
+						countMap.put(tagId, countMap.get(tagId)+1);
+					}else{
+						countMap.put(tagId, 1);
+					}
+				}
+			}
+		}
+		boolean flag = customerTagDao.batchSaveCustomerTag(paramList);
+		if(flag){//更新标签计数
+			ServiceResult<Boolean> result = tagService.batchUpdateTagCount(countMap, ComputeType.INCREASE);
+			if(!result.getResult()){
+				log.error("批量给用户打标签时，标签绑定数量累加失败！");
+			}
+		}
+		return new ServiceResult<Boolean>(flag?Code.SUCCESS:Code.FAILED, "", flag);
+	}
+
+	@Override
+	public ServiceResult<Boolean> clearCustomerTag(Integer customerId) {
+		List<Integer> custIds = new ArrayList<Integer>();
+		custIds.add(customerId);
+		List<CustomerTag> customerTags = customerTagDao.getCustomerTagList(custIds);
+		boolean flag = customerTagDao.deleteCustomerTag(customerId);
+		if(flag && customerTags!=null && customerTags.size()>0){
+			HashMap<Long, Integer> countMap = new HashMap<Long, Integer>();
+			for(int i=0;i<customerTags.size();i++){
+				CustomerTag customerTag = customerTags.get(i);
+				countMap.put(customerTag.getTagId(), 1);
+			}
+			ServiceResult<Boolean> result = tagService.batchUpdateTagCount(countMap, ComputeType.DECREASE);
+			if(!result.getResult()){
+				log.error("清空用户所有标签，标签解绑数量累减失败！");
+			}
+		}
+		return new ServiceResult<Boolean>(flag?Code.SUCCESS:Code.FAILED, "", flag);
+	}
+	
+	@Override
+	public ServiceResult<Boolean> deleteCustomerTag(Long tagId, Long userId) {
+		boolean boo = customerTagDao.deleteCustomerTag(tagId,userId);
+		if(boo){//更新标签计数
+			HashMap<Long, Integer> countMap = new HashMap<Long, Integer>();
+			countMap.put(tagId, 1);
+			ServiceResult<Boolean> result = tagService.batchUpdateTagCount(countMap, ComputeType.DECREASE);
+			if(!result.getResult()){
+				log.error("删除用户指定标签时，标签解绑数量累减失败！");
+			}
+		}
+		return new ServiceResult<Boolean>(Code.SUCCESS,null,boo);
+	}
+
+	@Override
+	public ServiceResult<Boolean> batchDeleteCustomerTag(Long tagId, Long[] userIds) {
+		boolean boo = customerTagDao.batchDeleteCustomerTag(tagId,userIds);
+		if(boo){//更新标签计数
+			HashMap<Long, Integer> countMap = new HashMap<Long, Integer>();
+			countMap.put(tagId, userIds.length);
+			ServiceResult<Boolean> result = tagService.batchUpdateTagCount(countMap, ComputeType.DECREASE);
+			if(!result.getResult()){
+				log.error("删除指定标签时，所有用户的此标签解绑数量累减失败！");
+			}
+		}
+		return new ServiceResult<Boolean>(Code.SUCCESS,null,boo);
+	}
+
+	@Override
+	public ServiceResult<Boolean> batchSyncSaveCustomerTag(Integer storeId,List<Integer> customerIds, List<String> tagCodes) {
+		ServiceResult<List<Long>> tagIdResult = tagService.getTagsByCodes(tagCodes,storeId);
+		if(tagIdResult.getCode() != Code.SUCCESS){
+			return new ServiceResult<Boolean>(Code.FAILED,null,false);
+		}
+		return this.batchSaveCustomerTag(customerIds, tagIdResult.getResult());
+	}
+
+	@Override
+	public ServiceResult<List<String>> getOpenIdByTag(List<Long> tagIds,Integer storeId) {
+		List<String> list = customerTagDao.getOpenIdsByTagIds(tagIds,storeId);
+		return new ServiceResult<List<String>>(Code.SUCCESS,"",list);
+	}
+
+}

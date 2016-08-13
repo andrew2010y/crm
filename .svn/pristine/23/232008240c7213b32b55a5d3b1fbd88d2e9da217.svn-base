@@ -1,0 +1,42 @@
+package com.sdzn.fuzhuxian.api.service.impl.teacher;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sdzn.fuzhuxian.api.domain.dao.teacher.TeacherTeachDAO;
+import com.sdzn.fuzhuxian.api.domain.model.teacher.SchoolTeacherTeach;
+import com.sdzn.fuzhuxian.api.service.teacher.SchoolTeacherTeachService;
+
+@Service
+public class SchoolTeacherTeachServiceImpl implements SchoolTeacherTeachService {
+	@Autowired
+	private TeacherTeachDAO teacherDAO;
+
+	@Override
+	public List<SchoolTeacherTeach> selectAll() {
+		return teacherDAO.selectAll();
+	}
+
+	@Override
+	public int insert(SchoolTeacherTeach schoolTeacherTeach) {
+		return teacherDAO.insert(schoolTeacherTeach);
+	}
+
+	@Override
+	public int updateById(SchoolTeacherTeach schoolTeacherTeach) {
+		return teacherDAO.updateById(schoolTeacherTeach);
+	}
+
+	@Override
+	public int deleteById(Integer id) {
+		return teacherDAO.deleteById(id);
+	}
+
+    @Override
+    public SchoolTeacherTeach selectById() {
+        return teacherDAO.selectById();
+    }
+
+}

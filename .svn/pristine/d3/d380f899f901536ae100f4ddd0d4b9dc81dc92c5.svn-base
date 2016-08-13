@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sdzn.fuzhuxian.api.domain.dao.school.SchoolLevelDao" >
+  <resultMap id="baseResultMap" type="com.sdzn.fuzhuxian.api.domain.model.school.SchoolLevel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="school_id" property="schoolId" jdbcType="INTEGER" />
+    <result column="level_id" property="levelId" jdbcType="INTEGER" />
+    <result column="level_name" property="levelName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="baseColumnList" >
+    id, school_id, level_id, level_name
+  </sql>
+ 
+  <select id="select" resultMap="baseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="baseColumnList" />
+    from teach_school_info_level
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from teach_school_info_level
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.sdzn.fuzhuxian.api.domain.model.school.SchoolLevel" >
+    insert into teach_school_info_level (id, school_id, level_id, 
+      level_name)
+    values (#{id,jdbcType=INTEGER}, #{schoolId,jdbcType=INTEGER}, #{levelId,jdbcType=INTEGER}, 
+      #{levelName,jdbcType=VARCHAR})
+  </insert>
+   
+  <update id="update" parameterType="com.sdzn.fuzhuxian.api.domain.model.school.SchoolLevel" >
+    update teach_school_info_level
+    set school_id = #{schoolId,jdbcType=INTEGER},
+      level_id = #{levelId,jdbcType=INTEGER},
+      level_name = #{levelName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,58 @@
+/*
+ * 文件名：${file_name}
+ * 版权：时代智囊
+ * 描述：〈描述〉
+ * 修改内容：新增
+ * 修改人：〈武海之〉
+ * 修改时间：YYYY-MM-DD
+ * 修改单号：〈修改单号〉
+ * 修改内容：〈修改内容〉
+ */
+package com.sdzn.fuzhuxian.api.service.impl.student;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sdzn.fuzhuxian.api.domain.dao.student.SchoolStudentGoDAO;
+import com.sdzn.fuzhuxian.api.domain.model.student.SchoolStudentGo;
+import com.sdzn.fuzhuxian.api.service.student.SchoolStudentGoService;
+
+/**
+ * simple introduction
+ * 
+ * <p>
+ * detailed comment
+ * @author 武海之 2016年7月16日
+ * @see
+ * @since 1.0
+ */
+@Service
+public class SchoolStudentGoServiceImpl implements SchoolStudentGoService {
+    @Autowired
+    private SchoolStudentGoDAO studInfoDao;
+
+    // 查询学生就学信息表
+
+    @Override
+    public List<SchoolStudentGo> selectAll() {
+        return studInfoDao.selectAll();
+    }
+
+    @Override
+    public int insert(SchoolStudentGo schoolStudInfo) {
+        return studInfoDao.insert(schoolStudInfo);
+    }
+
+    @Override
+    public int update(SchoolStudentGo schoolStudInfo) {
+        return studInfoDao.updateById(schoolStudInfo);
+    }
+
+    @Override
+    public int delete(Integer id) {
+        return studInfoDao.deleteById(id);
+    }
+
+}

@@ -1,0 +1,76 @@
+/*
+ * 文件名：LessonResourceService.java
+ * 版权：时代智囊
+ * 描述：〈描述〉
+ * 修改人：武海之
+ * 修改时间：2016年7月18日
+ * 修改内容：新增
+ * 修改人：〈武海之〉
+ * 修改时间：YYYY-MM-DD
+ * 修改单号：〈修改单号〉
+ * 修改内容：〈修改内容〉
+ */
+package com.sdzn.fuzhuxian.api.service.impl.teach;
+
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sdzn.fuzhuxian.api.domain.dao.teach.LessonResourceDAO;
+import com.sdzn.fuzhuxian.api.domain.model.teach.LessonResource;
+import com.sdzn.fuzhuxian.api.service.teach.LessonResourceService;
+
+/**
+ * 教师教案资源
+ * @author 武海之 2016年7月20日
+ * @see
+ * @since 1.0
+ */
+@Service
+public class LessonResourceServiceImpl implements LessonResourceService {
+
+    @Autowired
+    private LessonResourceDAO resourceDAO;
+
+    /**
+     * 获取教师教案资源列表
+     */
+    @Override
+    public List<LessonResource> list(HashMap<String, Object> params) {
+        return resourceDAO.list(params);
+    }
+
+    /**
+     * 通过id获取教师教案资源
+     */
+    @Override
+    public LessonResource listById(Integer id) {
+        return resourceDAO.listById(id);
+    }
+
+    /**
+     * 新增教师教案资源
+     */
+    @Override
+    public int insert(LessonResource resource) {
+        return resourceDAO.insert(resource);
+    }
+
+    /**
+     * 修改教师教案资源
+     */
+    @Override
+    public int updateById(LessonResource resource) {
+        return resourceDAO.updateById(resource);
+    }
+
+    /**
+     * 删除教师教案资源
+     */
+    @Override
+    public int deleteById(Integer id) {
+        return resourceDAO.deleteById(id);
+    }
+}

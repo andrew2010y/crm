@@ -1,0 +1,59 @@
+package com.sdzn.fuzhuxian.api.domain.model.user;
+
+import java.io.Serializable;
+import java.util.Date;
+
+public class UserAdmin implements Serializable {
+
+	private static final long serialVersionUID = -1367856099788467326L;
+
+	private Integer id;
+
+	private String accountName;
+ 
+	private Integer createAccountId;
+ 
+	private Date createTime;
+ 
+	private String realName;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	public Integer getCreateAccountId() {
+		return createAccountId;
+	}
+
+	public void setCreateAccountId(Integer createAccountId) {
+		this.createAccountId = createAccountId;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+}

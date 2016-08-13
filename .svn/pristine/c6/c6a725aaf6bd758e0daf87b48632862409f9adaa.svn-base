@@ -1,0 +1,33 @@
+/*
+ * 文件名：AccountService
+ * 版权：Copyright 2016-2027 SDZN. All Rights Reserved.
+ * 描述：  账号信息服务层接口
+ * 修改人： yanxk
+ * 修改时间：2016-07-15
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.service.user;
+
+import com.sdzn.fuzhuxian.api.domain.model.user.Account;
+
+/**
+ * 
+ * AccountService 账号信息服务层接口
+ * 
+ * @author yanxk 2016年7月15日
+ * @see
+ * @since 1.0
+ */
+public interface AccountService {
+	
+	public int save(Account bean);
+	
+	public Account get(Integer id);
+	
+	public int delete(Integer id);
+	
+	public Account getByNameAndPassword (String name,String password);
+/*	
+	public List<Account> list();*/
+	
+}

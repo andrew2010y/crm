@@ -1,0 +1,71 @@
+/* 会员自定义字段设置 */
+.cus-info-set-head{
+	font-size:16px;
+	border-bottom: 1px solid #d8d8d8;
+	padding: 20px;
+}
+.cus-info-set-head .head-tip{
+	font-size:13px;
+	margin-left:5px;
+	color: #aaa;
+}
+.must-field{
+	margin-bottom: 30px;
+}
+.must-field-words{
+	border:1px dashed #aaa;
+	padding:10px;
+	display: inline-block;
+	margin-left:20px;
+}
+.must-field-words span{
+	display: inline-block;
+    padding: 5px 20px;
+    margin-bottom: 0;
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 1.5;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right:10px;
+}
+.must-field-tip{
+	font-size: 13px;
+    color: #aaa;
+    line-height: 2;
+    margin-left: 85px;
+}
+.other-field-head .other-field-tip{
+	font-size:13px;
+	margin-left: 15px;
+    color: #aaa;
+}
+.unedit-box .table-panel .table>tbody>tr>td:last-child{
+	text-align: center;
+}
+.edit-box .table-panel .table>tbody>tr>td:last-child{
+	text-align: center;
+}
+#editTextarea{
+	width: 530px;
+    height: 180px;
+    padding: 10px;
+    font-size: 13px;
+    resize: none;
+}
+.dialog-text{
+	display: inline-block;
+    width: 83%;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+.dialog-content{
+	margin:0 20px;
+	font-size:14px;
+	line-height:2em;
+}
+/* 会员自定义字段设置 end */

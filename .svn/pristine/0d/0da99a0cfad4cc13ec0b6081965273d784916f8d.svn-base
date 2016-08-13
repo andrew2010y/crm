@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sdzn.fuzhuxian.api.domain.dao.lesson.LessonQuestionDao" >
+  <resultMap id="BaseResultMap" type="com.sdzn.fuzhuxian.api.domain.model.lesson.LessonQuestion" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="question_id" property="questionId" jdbcType="INTEGER" />
+    <result column="study_target" property="studyTarget" jdbcType="VARCHAR" />
+    <result column="grade" property="grade" jdbcType="BIT" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="stage" property="stage" jdbcType="BIT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, question_id, study_target, grade, type, stage
+  </sql>
+   
+  <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from teach_lesson_question
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from teach_lesson_question
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.sdzn.fuzhuxian.api.domain.model.lesson.LessonQuestion" >
+    insert into teach_lesson_question (id, question_id, study_target, 
+      grade, type, stage)
+    values (#{id,jdbcType=INTEGER}, #{questionId,jdbcType=INTEGER}, #{studyTarget,jdbcType=VARCHAR}, 
+      #{grade,jdbcType=BIT}, #{type,jdbcType=INTEGER}, #{stage,jdbcType=BIT})
+  </insert>
+  
+  <update id="update" parameterType="com.sdzn.fuzhuxian.api.domain.model.lesson.LessonQuestion" >
+    update teach_lesson_question
+    set question_id = #{questionId,jdbcType=INTEGER},
+      study_target = #{studyTarget,jdbcType=VARCHAR},
+      grade = #{grade,jdbcType=BIT},
+      type = #{type,jdbcType=INTEGER},
+      stage = #{stage,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

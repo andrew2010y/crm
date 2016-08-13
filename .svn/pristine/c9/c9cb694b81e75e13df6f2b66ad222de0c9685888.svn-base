@@ -1,0 +1,43 @@
+package com.sdzn.fuzhuxian.api.domain.model.school;
+
+public class SchoolLevel {
+    private Integer id;
+
+    private Integer schoolId;
+
+    private Integer levelId;
+
+    private String levelName;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getSchoolId() {
+        return schoolId;
+    }
+
+    public void setSchoolId(Integer schoolId) {
+        this.schoolId = schoolId;
+    }
+
+    public Integer getLevelId() {
+        return levelId;
+    }
+
+    public void setLevelId(Integer levelId) {
+        this.levelId = levelId;
+    }
+
+    public String getLevelName() {
+        return levelName;
+    }
+
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
+    }
+}

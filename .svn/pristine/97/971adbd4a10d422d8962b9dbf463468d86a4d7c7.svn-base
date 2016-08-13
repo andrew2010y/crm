@@ -1,0 +1,75 @@
+/**
+ * 文件名：SchoolAdminService
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述： 学校管理员
+ * 修改人：王宁
+ * 修改时间：2016-07-14
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.service.user;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sdzn.fuzhuxian.api.domain.dao.user.SchoolAdminDao;
+import com.sdzn.fuzhuxian.api.domain.model.user.SchoolAdmin;
+
+/**
+ * SchoolAdminService
+ * <p>
+ * 学校管理员
+ * 
+ * @author 王宁 2016年7月14日
+ * @see
+ * @since 1.0
+ */
+@Service
+public class SchoolAdminService {
+
+	@Autowired
+	private SchoolAdminDao adminDao;
+
+	/**
+	 * 查询学校管理员列表
+	 * 
+	 * @return
+	 */
+	public List<SchoolAdmin> selectAll() {
+		return adminDao.selectAll();
+
+	}
+
+	/**
+	 * 添加管理员
+	 * 
+	 * @param schoolAdmin
+	 * @return
+	 */
+	public int insertAdmin(SchoolAdmin schoolAdmin) {
+		return adminDao.insert(schoolAdmin);
+	}
+
+	/**
+	 * 删除管理员账号
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public int deleteAdmin(Integer id) {
+		return adminDao.deleteById(id);
+
+	}
+
+	/**
+	 * 修改管理员账户
+	 * 
+	 * @param admin
+	 * @return
+	 */
+	public int updateAdmin(SchoolAdmin admin) {
+		return adminDao.updateById(admin);
+
+	}
+}

@@ -1,0 +1,159 @@
+package com.sdzn.fuzhuxian.api.controller;
+
+import com.sdzn.fuzhuxian.api.util.TimeUtils;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
+import net.sf.json.processors.JsonValueProcessor;
+import net.sf.json.util.CycleDetectionStrategy;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
+
+public class JsonResultBuilder {
+
+    public static final String CODE = "code";
+    public static final String MSG = "msg";
+    public static final String RESULT = "result";
+    public static final String DATA = "data";
+    public static final String DATE = "date";
+    public static final String TIME = "time";
+
+    private String[] excludes = null;
+    private String dateFormat = "MM/dd/yyyy";
+
+    private JSONObject jsonResult;
+
+    public JsonResultBuilder() {
+
+        jsonResult = new JSONObject();
+        jsonResult.put(DATE, TimeUtils.getCurrentDateShort());
+        jsonResult.put(TIME, TimeUtils.getTimeShort());
+        setStatus(Status.SUCCESS);
+    }
+
+    public JsonResultBuilder setStatus(Status status) {
+
+        jsonResult.put(CODE, status.getCode());
+        jsonResult.put(MSG, status.getMsg());
+        return this;
+    }
+
+    public int getStatusCode() {
+
+        return jsonResult.getInt(CODE);
+    }
+
+    public void putResult(String key, Object result) {
+
+        if (result == null) {
+            return;
+        }
+
+        Object obj = jsonResult.get(RESULT);
+        if (obj == null || !(obj instanceof JSONObject)) {
+            obj = new JSONObject();
+        }
+        if (obj instanceof JSONObject) {
+            JSONObject data = (JSONObject) obj;
+            if (result instanceof String || result instanceof Integer || result instanceof Float
+                    || result instanceof Short || result instanceof Long
+                    || result instanceof Double || result instanceof Boolean
+                    || result instanceof Byte || result instanceof Character
+                    || result instanceof BigDecimal) {
+                data.put(key, result);
+            } else {
+                if (result instanceof Collection || result.getClass().isArray()) {
+                    JSONArray json = JSONArray.fromObject(result, configJson());
+                    data.put(key, json);
+                } else {
+                    JSONObject json = JSONObject.fromObject(result, configJson());
+                    data.put(key, json);
+                }
+            }
+        }
+        jsonResult.put(RESULT, obj);
+    }
+
+    public void setResult(Object result) {
+
+        putResult(DATA, result);
+    }
+
+    public JSONObject getResult() {
+
+        return jsonResult;
+    }
+
+    public JsonConfig configJson() {
+
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.setExcludes(excludes);
+        jsonConfig.setIgnoreDefaultExcludes(false);
+        jsonConfig.setAllowNonStringKeys(true);
+        jsonConfig.setCycleDetectionStrategy(CycleDetectionStrategy.LENIENT);
+        jsonConfig.registerJsonValueProcessor(Date.class, new DateJsonValueProcessor(dateFormat));
+        return jsonConfig;
+    }
+
+    public String[] getExcludes() {
+
+        return excludes;
+    }
+
+    public void setExcludes(String[] excludes) {
+
+        this.excludes = excludes;
+    }
+
+    public String getDateFormat() {
+
+        return dateFormat;
+    }
+
+    public void setDateFormat(String dateFormat) {
+
+        this.dateFormat = dateFormat;
+    }
+
+    class DateJsonValueProcessor implements JsonValueProcessor {
+
+        public static final String DEFAULT_DATE_PATTERN = "MM/dd/yyyy";
+        private DateFormat dateFormat;
+
+        /**
+         * 构造方法.
+         *
+         * @param datePattern 日期格式
+         */
+        public DateJsonValueProcessor(String datePattern) {
+
+            try {
+                dateFormat = new SimpleDateFormat(datePattern);
+            } catch (Exception ex) {
+                dateFormat = new SimpleDateFormat(DEFAULT_DATE_PATTERN);
+            }
+        }
+
+        public Object processArrayValue(Object value, JsonConfig jsonConfig) {
+
+            return process(value);
+        }
+
+        public Object processObjectValue(String key, Object value, JsonConfig jsonConfig) {
+
+            return process(value);
+        }
+
+        private Object process(Object value) {
+
+            if (value == null)
+                return null;
+
+            return dateFormat.format((Date) value);
+        }
+    }
+}

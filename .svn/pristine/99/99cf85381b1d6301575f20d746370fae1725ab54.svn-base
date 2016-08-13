@@ -1,0 +1,37 @@
+/**
+ * 文件名：NetWorkDao
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述：
+ * 修改人： yizhou
+ * 修改时间：16/7/14
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.domain.dao.network;
+
+import com.sdzn.fuzhuxian.api.domain.model.network.NetWork;
+
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * NetWorkDao〈一句话功能简述〉 〈功能详细描述〉
+ *
+ * @author yizhou
+ * @version v1.0.0
+ * @see ［相关类/方法］
+ * @since 产品/模块版本
+ */
+public interface NetWorkDao {
+
+    List<NetWork> selectByImei(String imei);
+    
+    NetWork selectById(Integer netWork);
+    
+    int insert(NetWork netWork);
+    
+    int deleteById(Integer id);
+
+    int updateById(NetWork netWork);
+
+    List<NetWork> list(HashMap<String, Object> params);
+}

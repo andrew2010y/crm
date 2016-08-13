@@ -1,0 +1,51 @@
+/**
+ * 文件名：SchoolStudentGoService
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述：学校学生就学信息
+ * 修改人：武海之
+ * 修改时间：16/7/16
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.service.student;
+
+import java.util.List;
+
+import com.sdzn.fuzhuxian.api.domain.model.student.SchoolStudentGo;
+
+/**
+ * 学校学生就学信息
+ * 
+ * @author 武海之 2016年7月16日
+ * @see
+ * @since 1.0
+ */
+public interface SchoolStudentGoService {
+
+    /**
+     * 查询学生就学信息列表
+     * @return
+     */
+    List<SchoolStudentGo> selectAll();
+
+    /**
+     * 增加学生就学信息
+     * @param schoolStudInfo
+     * @return
+     */
+    int insert(SchoolStudentGo schoolStudInfo);
+
+    /**
+     * 修改学生就学信息
+     * @param schoolStudInfo
+     * @return
+     */
+    int update(SchoolStudentGo schoolStudInfo);
+
+    /**
+     * 删除学生就学信息
+     * @param id
+     * @return
+     */
+    int delete(Integer id);
+
+}

@@ -1,0 +1,55 @@
+package com.sdzn.fuzhuxian.api.domain.model.role;
+
+import java.util.Date;
+
+public class RoleToMenu {
+    private Integer id;
+
+    private Integer roleId;
+
+    private Integer createAccountId;
+
+    private Date createTime;
+
+    private Integer menuId;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
+    }
+
+    public Integer getCreateAccountId() {
+        return createAccountId;
+    }
+
+    public void setCreateAccountId(Integer createAccountId) {
+        this.createAccountId = createAccountId;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Integer getMenuId() {
+        return menuId;
+    }
+
+    public void setMenuId(Integer menuId) {
+        this.menuId = menuId;
+    }
+}

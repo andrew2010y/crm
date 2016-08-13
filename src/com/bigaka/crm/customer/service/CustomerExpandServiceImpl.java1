@@ -1,0 +1,546 @@
+package com.bigaka.crm.customer.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.bigaka.crm.common.assist.ServiceException;
+import com.bigaka.crm.common.model.Code;
+import com.bigaka.crm.common.model.ServiceResult;
+import com.bigaka.crm.common.service.WechatMsgTmplService;
+import com.bigaka.crm.common.util.StringUtil;
+import com.bigaka.crm.customer.dao.CustomerDao;
+import com.bigaka.crm.customer.dao.CustomerExpandDao;
+import com.bigaka.crm.customer.model.Customer;
+import com.bigaka.crm.customer.model.CustomerDetail;
+import com.bigaka.crm.customer.model.CustomerExpand;
+import com.bigaka.crm.customer.model.CustomerPointChannelEnum;
+import com.bigaka.crm.form.model.FormStoreProp;
+import com.bigaka.crm.form.model.FormStorePropExt;
+import com.bigaka.crm.form.service.FormCustomerPropService;
+import com.bigaka.crm.form.service.FormStorePropService;
+import com.bigaka.crm.pointlog.model.PointLog;
+import com.bigaka.crm.setting.model.PointSettingEnum;
+import com.bigaka.crm.setting.service.StorePointSettingService;
+import com.bigaka.crm.wechat.service.TmplMsgService;
+
+@Service("customerExpandService")
+public class CustomerExpandServiceImpl implements CustomerExpandService {
+	
+	private static final Log log = LogFactory.getLog(CustomerExpandServiceImpl.class);
+
+	@Autowired
+	private CustomerExpandDao customerExpandDao;
+	@Autowired
+	private CustomerDao customerDao;
+	@Autowired
+	private CustomerService customerService;
+	@Autowired
+	private StorePointSettingService storePointSettingService;
+	@Autowired
+	private CustomerDetailService customerDetailService;
+	@Autowired
+	private TmplMsgService tmplMsgService;
+	@Autowired
+	private WechatMsgTmplService wechatMsgTmplService;
+	@Autowired
+	private FormStorePropService formStorePropService;
+	@Autowired
+	private FormCustomerPropService formCustomerPropService;
+	/*@Autowired
+	private FormCustomerPropDao formCustomerPropDao;*/
+
+	/**
+	 * 获取会员关注状态
+	 */
+	public ServiceResult<CustomerExpand> getCustomerExpand(Integer storeId,
+			Integer customerId) {
+		if (customerId != null) {
+			CustomerExpand customerExpand = customerExpandDao
+					.getCustomerExpand(customerId);
+			// 状态为空伪赋值
+			if (customerExpand == null) {
+				CustomerExpand expand = new CustomerExpand();
+				expand.setFollowPublicNum((byte) 0);
+				expand.setFirstFollowPublicNum((byte) 0);
+				expand.setFirstFollowWechat((byte) 0);
+				expand.setPerfectDegree((byte) 0);
+				return new ServiceResult<CustomerExpand>(Code.SUCCESS, null,
+						expand);
+			}
+			return new ServiceResult<CustomerExpand>(Code.SUCCESS, null,
+					customerExpand);
+		} else {
+			return new ServiceResult<CustomerExpand>(Code.FAILED,
+					"门店id或customerId都不能为空！", null);
+		}
+	}
+
+	/**
+	 * 首次关注公众号更新扩展表，赠送积分。
+	 * @author Ji qc
+	 * @date 2016年6月30日
+	 * @return
+	 */
+	public ServiceResult<Boolean> updateFirstPublicFollow(Integer storeId,Integer customerId) {
+		if (customerId != null) {
+			// 获取已有信息
+			CustomerExpand customerExpand = customerExpandDao
+					.getCustomerExpand(customerId);
+			Customer customer = customerDao.getCustomerByCid(customerId);
+			if (customer == null) {
+				return new ServiceResult<Boolean>(Code.FAILED,
+						"用户不存在", null);
+			}
+			// 有用户数据的情况
+			ServiceResult<Integer> pointResult;
+			boolean flag=false;
+			if (customerExpand != null) {
+				// 公众号关注情况
+				// 调用接口查询用户的关注状态
+				ServiceResult<Boolean> status = customerService.getUserPublicNumberStatus(customerId);
+				// 首先查询用户的首次关注状态不为已关注
+				if (customerExpand.getFirstFollowPublicNum() == 0) {// 首次：未关注
+					// 前提没有其他的服务操作扩展表
+					if (status.getCode() == 0 && status.getResult()==true
+							&& customerExpand.getFollowPublicNum() == 0) {// 获取状态：关注，关注：未关注
+						// 调用赠积分接口
+						pointResult = storePointSettingService.getPoinSetting(
+								PointSettingEnum.PUBLIC_NUMBER, customer.getParentStoreId());
+						PointLog pLog = new PointLog();
+						pLog.setStoreId(customer.getStoreId());
+						pLog.setCustomerId(customerId);
+						if (pointResult.getCode() == 0) {
+							if (pointResult.getResult() >= 0) {
+								pLog.setOperation(true);
+								pLog.setValue(pointResult.getResult());
+
+							} else {
+								pLog.setOperation(false);
+								pLog.setValue(pointResult.getResult());
+							}
+						} else {
+							pLog.setOperation(false);
+							pLog.setValue(0);
+						}
+						if (pLog.getValue() == null) {
+							pLog.setValue(0);
+						}
+						pLog.setOrderId(0);
+						pLog.setConsumeChannel(1);
+						ServiceResult<Boolean> result = customerDetailService
+								.updateCustPoint(pLog,
+										CustomerPointChannelEnum.PUBLIC_NUMBER);
+						if (result.getResult() == false) {
+							throw new ServiceException(Code.ADD_DATA_ERROR,
+									"关注公众号赠送积分使用失败");
+						}
+						// 修改字段 关注：1，首次：1
+						flag=customerExpandDao.updateCustomerFirstFPN(storeId,
+								customerId, 1, 1);
+					}
+				} else if (customerExpand.getFirstFollowPublicNum() == 1) {// 不是首次关注
+					if (status.getCode() == 0 && status.getResult()==true
+							&& customerExpand.getFollowPublicNum() == 0) {
+						customerExpandDao.updateCustomerFirstFPN(storeId,
+								customerId, 1, 1);
+					} else if (status.getCode() == 0 && status.getResult()==false
+							&& customerExpand.getFollowPublicNum() == 1) {
+						flag = customerExpandDao.updateCustomerFirstFPN(storeId,
+								customerId, 0, 1);
+					}
+				}
+			}
+			if(flag==true){
+				return new ServiceResult<Boolean>(Code.SUCCESS,
+						null, flag);
+			}else{
+				return new ServiceResult<Boolean>(Code.FAILED,
+						"扩展表不需要更新！", flag);
+			}
+		}else {
+			return new ServiceResult<Boolean>(Code.FAILED,
+					"用户Id不能为空", null);
+		}
+	}
+	/**
+	 * 首次绑定微信更新扩展表，赠送积分。
+	 * @author Ji qc
+	 * @date 2016年6月30日
+	 * @return
+	 */
+	public ServiceResult<Boolean> updateFirstFollowWechat(Integer storeId,Integer customerId) {
+		if (customerId != null) {
+			// 获取已有信息
+			CustomerExpand customerExpand = customerExpandDao
+					.getCustomerExpand(customerId);
+			// 获取微信的标识字段open_id和手机号等信息
+			Customer customer = customerDao.getCustomerByCid(customerId);
+			if (customer == null) {
+				return new ServiceResult<Boolean>(Code.FAILED,
+						"用户不存在", null);
+			}
+			// 有用户数据的情况
+			// 微信绑定情况
+			ServiceResult<Integer> pointResult;
+			boolean flag=false;
+			if (customerExpand != null) {
+				// 根据用户的手机号信息和open_id确定用户的首次绑定情况
+				if (customerExpand.getFirstFollowWechat() != 1
+						&& customer.getUsername() != null
+						&& customer.getOpenId() != null) {// 首次绑定
+					// 调用赠积分接口
+					pointResult = storePointSettingService.getPoinSetting(
+							PointSettingEnum.WECHAT, customer.getParentStoreId());
+					PointLog pLog = new PointLog();
+					pLog.setStoreId(customer.getStoreId());
+					pLog.setCustomerId(customerId);
+					if (pointResult.getCode() == 0) {
+						pLog.setOperation(true);
+						pLog.setValue(pointResult.getResult());
+					} else {
+						pLog.setOperation(false);
+						pLog.setValue(pointResult.getResult());
+					}
+					if (pLog.getValue() == null) {
+						pLog.setValue(0);
+					}
+
+					pLog.setOrderId(0);
+					pLog.setConsumeChannel(1);
+					ServiceResult<Boolean> result = customerDetailService
+							.updateCustPoint(pLog,
+									CustomerPointChannelEnum.WECHAT);
+					if (result.getResult() == null) {
+						throw new ServiceException(Code.ADD_DATA_ERROR,
+								"绑定微信赠送积分使用失败");
+					}
+					// 修改扩展表中的用户首次绑定状态
+					flag = customerExpandDao.updateCustomerFirstFWC(storeId,
+							customerId);
+				}
+			}
+			if(flag==true){
+				return new ServiceResult<Boolean>(Code.SUCCESS,
+						null, flag);
+			}else{
+				return new ServiceResult<Boolean>(Code.FAILED,
+						"未绑定微信更新扩展表失败！", flag);
+			}
+		}else {
+			return new ServiceResult<Boolean>(Code.FAILED,
+					"用户Id和商户id不能为空", null);
+		}
+	}
+	
+	/**
+	 * 更新并返回会员关注状态（登录调用）
+	 */
+	public ServiceResult<CustomerExpand> updateCustomerStatus(Integer storeId,
+			Integer customerId) {
+		if (customerId != null && storeId != null) {
+			// 获取已有信息
+			CustomerExpand customerExpand = customerExpandDao
+					.getCustomerExpand(customerId);
+			// 获取微信的标识字段open_id和手机号等信息
+			Customer customer = customerDao.getCustomerByCid(customerId);
+			if (customer == null) {
+				return new ServiceResult<CustomerExpand>(Code.FAILED, "用户不存在",
+						null);
+			}
+			// 有用户数据的情况
+			// 微信绑定情况
+			ServiceResult<Integer> pointResult;
+			if (customerExpand != null) {
+				// 根据用户的手机号信息和open_id确定用户的首次绑定情况
+				if (customerExpand.getFirstFollowWechat() != 1
+						&& customer.getUsername() != null
+						&& customer.getOpenId() != null) {// 首次绑定
+					// 调用赠积分接口
+					pointResult = storePointSettingService.getPoinSetting(
+							PointSettingEnum.WECHAT, storeId);
+					PointLog pLog = new PointLog();
+					pLog.setStoreId(customer.getStoreId());
+					pLog.setCustomerId(customerId);
+					if (pointResult.getCode() == 0) {
+						pLog.setOperation(true);
+						pLog.setValue(pointResult.getResult());
+					} else {
+						pLog.setOperation(false);
+						pLog.setValue(pointResult.getResult());
+					}
+					if (pLog.getValue() == null) {
+						pLog.setValue(0);
+					}
+
+					pLog.setOrderId(0);
+					pLog.setConsumeChannel(1);
+					ServiceResult<Boolean> result = customerDetailService
+							.updateCustPoint(pLog,
+									CustomerPointChannelEnum.WECHAT);
+					if (result.getResult() == null) {
+						throw new ServiceException(Code.ADD_DATA_ERROR,
+								"绑定微信赠送积分使用失败");
+					}
+					// 修改扩展表中的用户首次绑定状态
+					customerExpandDao.updateCustomerFirstFWC(storeId,
+							customerId);
+				}
+				// 公众号关注情况
+				// 调用接口查询用户的关注状态
+				ServiceResult<Boolean> status = customerService
+						.getUserPublicNumberStatus(customerId);
+				// 首先查询用户的首次关注状态不为已关注
+				if (customerExpand.getFirstFollowPublicNum() == 0) {// 首次：未关注
+					// 前提没有其他的服务操作扩展表
+					if (status.getCode() == 0 && status.getResult()==true
+							&& customerExpand.getFollowPublicNum() == 0) {// 获取状态：关注，关注：未关注
+						// 调用赠积分接口
+						pointResult = storePointSettingService.getPoinSetting(
+								PointSettingEnum.PUBLIC_NUMBER, storeId);
+						PointLog pLog = new PointLog();
+						pLog.setStoreId(customer.getStoreId());
+						pLog.setCustomerId(customerId);
+						if (pointResult.getCode() == 0) {
+							if (pointResult.getResult() >= 0) {
+								pLog.setOperation(true);
+								pLog.setValue(pointResult.getResult());
+
+							} else {
+								pLog.setOperation(false);
+								pLog.setValue(pointResult.getResult());
+							}
+						} else {
+							pLog.setOperation(false);
+							pLog.setValue(0);
+						}
+						if (pLog.getValue() == null) {
+							pLog.setValue(0);
+						}
+						pLog.setOrderId(0);
+						pLog.setConsumeChannel(1);
+						ServiceResult<Boolean> result = customerDetailService
+								.updateCustPoint(pLog,
+										CustomerPointChannelEnum.PUBLIC_NUMBER);
+						if (result.getResult() == false) {
+							throw new ServiceException(Code.ADD_DATA_ERROR,
+									"关注公众号赠送积分使用失败");
+						}
+						// 修改字段 关注：1，首次：1
+						customerExpandDao.updateCustomerFirstFPN(storeId,
+								customerId, 1, 1);
+					}
+				} else if (customerExpand.getFirstFollowPublicNum() == 1) {// 不是首次关注
+					if (status.getCode() == 0 && status.getResult()==true
+							&& customerExpand.getFollowPublicNum() == 0) {
+						customerExpandDao.updateCustomerFirstFPN(storeId,
+								customerId, 1, 1);
+					} else if (status.getCode() == 0 && status.getResult()==false
+							&& customerExpand.getFollowPublicNum() == 1) {
+						customerExpandDao.updateCustomerFirstFPN(storeId,
+								customerId, 0, 1);
+					}
+				}
+			} /*
+			 * else {// 无用户数据（扩展信息为空） // 为用户创建扩展信息 boolean flag =
+			 * customerExpandDao.setExpandInfo(storeId, customerId);
+			 * if(flag==true){ // 微信用户添加扩展信息 if (customer.getUsername() != null
+			 * && customer.getOpenId() != null) {// 首次绑定 // 调用赠积分接口 pointResult
+			 * = storePointSettingService.getPoinSetting(
+			 * PointSettingEnum.WECHAT, storeId); PointLog pLog = new
+			 * PointLog(); pLog.setStoreId(customer.getStoreId());
+			 * pLog.setCustomerId(customerId); if (pointResult.getCode() == 0) {
+			 * pLog.setOperation(true); pLog.setValue(pointResult.getResult());
+			 * } else { pLog.setOperation(false);
+			 * pLog.setValue(pointResult.getResult()); } if (pLog.getValue() ==
+			 * null) { pLog.setValue(0); } pLog.setOrderId(0);
+			 * pLog.setConsumeChannel(1); ServiceResult<Boolean> result =
+			 * customerDetailService .updateCustPoint(pLog,
+			 * CustomerPointChannelEnum.WECHAT); if (result.getResult() ==
+			 * false) { throw new ServiceException(Code.ADD_DATA_ERROR,
+			 * "赠送积分使用失败"); } // 修改扩展表中的用户首次绑定状态
+			 * customerExpandDao.updateCustomerFirstFWC(storeId, customerId); }
+			 * ServiceResult<Boolean> status = customerService
+			 * .getUserPublicNumberStatus(customerId); if
+			 * (status.getCode()==0&&status.getResult()) {// 首次关注公众号 // 调用赠积分接口
+			 * pointResult = storePointSettingService.getPoinSetting(
+			 * PointSettingEnum.PUBLIC_NUMBER, storeId); PointLog pLog = new
+			 * PointLog(); pLog.setStoreId(customer.getStoreId());
+			 * pLog.setCustomerId(customerId); if (pointResult.getCode() == 0) {
+			 * pLog.setOperation(true); pLog.setValue(pointResult.getResult());
+			 * } else { pLog.setOperation(false);
+			 * pLog.setValue(pointResult.getResult()); } if (pLog.getValue() ==
+			 * null) { pLog.setValue(0); } ServiceResult<Boolean> result =
+			 * customerDetailService .updateCustPoint(pLog,
+			 * CustomerPointChannelEnum.PUBLIC_NUMBER); if (result.getResult()
+			 * == false) { throw new ServiceException(Code.ADD_DATA_ERROR,
+			 * "关注公众号赠送积分使用失败"); } // 修改用户的扩展表的状态
+			 * customerExpandDao.updateCustomerFirstFPN(storeId, customerId, 1,
+			 * 1); }else{ return new ServiceResult<CustomerExpand>(Code.FAILED,
+			 * "初始化用户扩展信息失败！", null); } } }
+			 */
+			return new ServiceResult<CustomerExpand>(Code.SUCCESS, "修改用户状态成功",
+					customerExpandDao.getCustomerExpand(customerId));
+		} else {
+			return new ServiceResult<CustomerExpand>(Code.FAILED,
+					"用户Id和商户id不能为空", null);
+		}
+	}
+
+	/**
+	 * "vip_card_no","name","sex","birth_date","area_code","remark" 更新用户的信息完善程度
+	 */
+	public ServiceResult<Boolean> updateCustomerPerfectDegree(CustomerDetail customerDetail) {
+		float count = 0;
+		float countAll = 1;
+		// 统计用户信息的完善程度
+		if (customerDetail.getCustomerId() != null) {
+			
+			//获取老子段  customerId defulat 
+			// 使用 default
+			//count++;
+			// 获得用户详情中的基本信息
+			ServiceResult<CustomerDetail> customerDetailResult = customerDetailService
+					.getCustomerDetail(customerDetail);
+			if (customerDetailResult.getCode() == 0) {
+				if(customerDetail.getSendFlag()!=null&&customerDetail.getSendFlag()==false){
+					customerDetail = customerDetailResult.getResult();
+					customerDetail.setSendFlag(false);
+				}
+				customerDetail = customerDetailResult.getResult();
+				// 获得扩展属性
+				FormStorePropExt ext=customerDetail.getFormStorePropExt();
+				if (ext != null) {
+					if(ext.getDefaultProp()!=null){
+						List<String> defaultProp = customerDetail.getFormStorePropExt().getDefaultProp();
+						countAll += defaultProp.size();
+						if(defaultProp.contains("vip_card_no")){
+							countAll--;
+						}
+						if(defaultProp.contains("remark")){
+							countAll--;
+						}
+						//sex,vip_card_no,name,area_code,remark,birth_date
+						for (String s : defaultProp) {
+							if(s.equals("name")){
+								if(StringUtil.isNotBlank(customerDetail.getName())){
+									count++;
+								}
+							}
+							if(s.equals("sex")){
+								if(customerDetail.getSex()!=0){
+									count++;
+								}
+							}
+							if(s.equals("area_code")){
+								if(customerDetail.getAreaCode()!=0){
+									count++;
+								}
+							}
+							if(s.equals("birth_date")){
+								if(customerDetail.getBirthDate()!=0){
+									count++;
+								}
+							}
+						}
+					}
+					List<FormStoreProp> customProp = new ArrayList<FormStoreProp>();
+					if (ext.getCustomProp() != null) {
+						customProp = ext.getCustomProp();
+					}
+					for (FormStoreProp formStoreProp : customProp) {
+						if (formStoreProp.getUseState() == true
+								&& formStoreProp.getType() != "default") {
+							countAll++;
+							/*boolean flag = formCustomerPropDao
+									.getExistsPropValue(
+											customerDetail.getCustomerId(),
+											formStoreProp.getStorePropId());
+							if (flag == true) {
+								count++;
+							}*/
+						}
+					}
+				}
+			}
+			if (StringUtil.isNotBlank(customerDetail.getNickName())) {
+				count++;
+				countAll++;
+			} else {
+				countAll++;
+			}
+		} else {
+			return new ServiceResult<Boolean>(Code.FAILED, "用户Id为空无法确定用户",
+					false);
+		}
+		if(countAll>1){
+			countAll--;
+		}
+		// 传入数据换算方式
+		float num = count / countAll;
+		int numInt = 0;
+		if (num == 1) { // 传入1
+			numInt = 100;
+		} else if (num == 0) { // 传入0
+			numInt = 0;
+		} else {
+			// 传入num为小数
+			String numString = num + "";
+			int jieQu = numString.indexOf(".");
+			numString = numString.substring(jieQu + 1, jieQu + 2);
+			numInt = Integer.parseInt(numString);
+			if (numInt == 0) {// 只有个位数
+				numInt = 10;
+			} else {// 去个位数且变为十位数
+				numString = numString + "0";
+				numInt = Integer.parseInt(numString);
+			}
+		}
+		Boolean flag=false;
+		CustomerExpand customerExpand = customerExpandDao.getCustomerExpand(customerDetail.getCustomerId());
+		if(customerExpand.getFirstFinishDegree()!=1&&numInt==100){
+				Customer customer = customerDao.getCustomerByCid(customerDetail.getCustomerId());
+				// 调用赠积分接口
+				//查询更新用户信息赠送的积分数。
+				ServiceResult<Integer> poinSetting = storePointSettingService.getPoinSetting(PointSettingEnum.CUSTOMER_INFORMATION, customer.getParentStoreId());
+				PointLog pLog = new PointLog();
+				pLog.setStoreId(customer.getStoreId());
+				pLog.setCustomerId(customerDetail.getCustomerId());
+				if (poinSetting.getCode() == 0) {
+					if (poinSetting.getResult() >= 0) {
+						pLog.setOperation(true);
+						pLog.setValue(poinSetting.getResult());
+						
+					} else {
+						pLog.setOperation(false);
+						pLog.setValue(poinSetting.getResult());
+					}
+				} else {
+					pLog.setOperation(false);
+					pLog.setValue(0);
+				}
+				if (pLog.getValue() == null) {
+					pLog.setValue(0);
+				}
+				pLog.setOrderId(0);
+				pLog.setConsumeChannel(1);
+				customerDetailService.updateCustPoint(pLog,CustomerPointChannelEnum.CUSTOMER_INFORMATION);
+				flag = customerExpandDao.updatePerDegree(customerDetail.getCustomerId(), numInt,1);
+		}else{
+			flag = customerExpandDao.updatePerDegree(customerDetail.getCustomerId(), numInt);
+		}
+		if (flag) {
+			if(customerDetail.getSendFlag()==null||customerDetail.getSendFlag()==true){
+				wechatMsgTmplService.sendWechatMsgForUpdateDegree(customerDetail);
+			}
+			return new ServiceResult<Boolean>(Code.SUCCESS, "修改用户完善信息成功!", flag);
+		} else {
+			return new ServiceResult<Boolean>(Code.FAILED, "修改用户完善信息失败!", flag);
+		}
+	}
+
+}

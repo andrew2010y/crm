@@ -1,0 +1,17 @@
+package com.sdzn.fuzhuxian.api.service.teacher;
+
+import java.util.List;
+
+import com.sdzn.fuzhuxian.api.domain.model.teacher.SchoolTeacherTeach;
+
+public interface SchoolTeacherTeachService {
+
+	List<SchoolTeacherTeach> selectAll();
+
+	int insert(SchoolTeacherTeach schoolTeacherTeach);
+
+	int update(SchoolTeacherTeach schoolTeacherTeach);
+
+	int delete(Integer id);
+
+}

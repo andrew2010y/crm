@@ -1,0 +1,15 @@
+package com.sdzn.fuzhuxian.api.domain.dao.lesson;
+
+import com.sdzn.fuzhuxian.api.domain.model.lesson.LessonQuestion;
+
+
+public interface LessonQuestionDao {
+
+    int delete(Integer id);
+
+    int insert(LessonQuestion record);
+
+    LessonQuestion select(Integer id);
+
+    int update(LessonQuestion record);
+}

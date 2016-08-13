@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdzn.fuzhuxian.api.domain.dao.user.SchoolTeacherDao">
+	<resultMap id="base_result_map"
+		type="com.sdzn.fuzhuxian.api.domain.model.user.SchoolTeacher">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="account_name" jdbcType="VARCHAR" property="accountName" />
+		<result column="create_account_id" jdbcType="INTEGER" property="createAccountId" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="school_id" jdbcType="INTEGER" property="schoolId" />
+		<result column="school_name" jdbcType="VARCHAR" property="schoolName" />
+		<result column="real_name" jdbcType="VARCHAR" property="realName" />
+		<result column="telephone" jdbcType="CHAR" property="telephone" />
+		<result column="sex" jdbcType="TINYINT" property="sex" />
+		<result column="photo" jdbcType="VARCHAR" property="photo" />
+	</resultMap>
+	
+	<sql id="base_column_list">
+		id, account_name, create_account_id, create_time, school_id, school_name,real_name,telephone,sex,photo
+	</sql>
+	
+	<select id="selectAll" resultMap="base_result_map">
+		SELECT * FROM
+		teach_user_school_teacher
+	</select>
+	
+	<insert id="insert" parameterType="com.sdzn.fuzhuxian.api.domain.model.user.SchoolTeacher">
+		insert into teach_user_school_teacher
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="accountName != null">
+				account_name,
+			</if>
+			<if test="createAccountId != null">
+				create_account_id,
+			</if>
+			<if test="createTime!= null">
+				create_time,
+			</if>
+			<if test="schoolId != null">
+				school_id,
+			</if>
+			<if test="schoolName != null">
+				school_name
+			</if>
+			<if test="realName != null">
+				real_name
+			</if>
+			<if test="telephone != null">
+				telephone
+			</if>
+			<if test="sex != null">
+				sex
+			</if>
+			<if test="photo != null">
+				photo
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="id != null">
+			#{id,jdbcType=INTEGER}
+			</if>
+			<if test="accountName != null">
+		     #{accountName,jdbcType=VARCHAR},
+			</if>
+			<if test="createAccountId != null">
+			#{createAccountId,jdbcType=INTEGER},
+				
+			</if>
+			<if test="createTime!= null">
+			#{createTime,jdbcType=TIMESTAMP},
+				
+			</if>
+			<if test="schoolId != null">
+			#{schoolId,jdbcType=INTEGER}
+			</if>
+			<if test="schoolName != null">
+				#{schoolName,jdbcType=VARCHAR},
+			</if>
+			<if test="realName != null">
+					#{realName,jdbcType=VARCHAR},
+			</if>	
+			<if test="telephone != null">
+				#{telephone,jdbcType=CHAR}
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=TINYINT}
+			</if>
+			<if test="photo != null">
+				#{photo,jdbcType=VARCHAR)
+			</if>	
+		</trim>
+	</insert>
+	
+	<update id="updateById" parameterType="com.sdzn.fuzhuxian.api.domain.model.user.SchoolTeacher">
+		update teach_user_school_teacher
+		<set>
+			<if test="accountName != null">
+				account_name= #{accountName,jdbcType=VARCHAR},
+			</if>
+			<if test="createAccountId != null">
+				create_account_id = #{createAccountId,jdbcType=INTEGER},
+			</if>
+			<if test="create_time != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="schoolId != null">
+				school_id = #{schoolId,jdbcType=INTEGER},
+			</if>
+			<if test="schoolName!= null">
+				school_name = #{schoolName,jdbcType=VARCHAR},
+			</if>
+			<if test="realName!= null">
+				real_name = #{schoolName,jdbcType=VARCHAR},
+			</if>
+			<if test="telephone != null">
+				telephone=#{telephone,jdbcType=CHAR}
+			</if>
+			<if test="sex != null">
+				sex=#{sex,jdbcType=TINYINT}
+			</if>
+			<if test="photo != null">
+				photo=#{photo,jdbcType=VARCHAR)
+			</if>	
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+		<delete id="deleteById" parameterType="java.lang.Integer">
+		delete from teach_user_school_teacher
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+</mapper>

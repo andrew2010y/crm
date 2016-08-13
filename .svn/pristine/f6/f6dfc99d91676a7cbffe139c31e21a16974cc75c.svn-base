@@ -1,0 +1,32 @@
+/*
+ * 文件名：LessonService.java
+ * 版权：时代智囊
+ * 描述：〈描述〉
+ * 修改人：武海之
+ * 修改时间：2016年7月18日
+ * 修改内容：新增
+ * 修改人：〈武海之〉
+ * 修改时间：YYYY-MM-DD
+ * 修改单号：〈修改单号〉
+ * 修改内容：〈修改内容〉
+ */
+package com.sdzn.fuzhuxian.api.service.teach;
+
+import java.util.HashMap;
+import java.util.List;
+
+import com.sdzn.fuzhuxian.api.domain.model.teach.Lesson;
+
+public interface LessonService {
+
+    List<Lesson> list(HashMap<String,Object> params);
+
+    Lesson listById(Integer id);
+
+    int insert(Lesson lesson);
+
+    int updateById(Lesson lesson);
+
+    int deleteById(Integer id);
+
+}

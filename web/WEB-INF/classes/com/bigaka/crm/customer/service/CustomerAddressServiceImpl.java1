@@ -1,0 +1,197 @@
+package com.bigaka.crm.customer.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.bigaka.crm.common.assist.RedisCache;
+import com.bigaka.crm.common.assist.ServiceException;
+import com.bigaka.crm.common.model.Code;
+import com.bigaka.crm.common.model.ServiceResult;
+import com.bigaka.crm.common.util.DateUtil;
+import com.bigaka.crm.common.util.StringUtil;
+import com.bigaka.crm.customer.dao.CustomerAddressDao;
+import com.bigaka.crm.customer.model.CustomerAddress;
+import com.bigaka.crm.customer.model.LoginCredential;
+import com.bigaka.crm.service.assist.UniqueGenerate;
+
+/**
+ * 顾客收货地址
+ * @author Dylan_Tao
+ * @date 2015-12-15
+ * Copyright 2015 bigaka.com. All Rights Reserved. 
+ */
+@Service("customerAddressService")
+public class CustomerAddressServiceImpl implements CustomerAddressService{
+	
+	@Autowired
+	private CustomerAddressDao customerAddressDao;
+	
+	/*@Autowired
+	private RedisCache redisCache;*/
+	@Autowired
+	private UniqueGenerate uniqueGenerate;
+
+	@Override
+	public ServiceResult<List<CustomerAddress>> getCustomerAddressList(String token, CustomerAddress address) {
+		if(StringUtil.isNotBlank(token)){
+			if(StringUtil.isNotBlank(token)){
+				/* LoginCredential loginCredential = redisCache.getObject(token);
+				 if(loginCredential!=null && loginCredential.getCustomerId()!=null){
+					 if(address==null){address = new CustomerAddress();}
+					 address.setCustomerId(loginCredential.getCustomerId());
+				 }*/
+			}
+		}
+		if(StringUtil.isNotBlank(token) || (address!=null && address.getCustomerId()!=null) || (address!=null && StringUtil.isNotBlank(address.getCookieId()))){
+			List<CustomerAddress> addressList = customerAddressDao.getCustomerAddressList(address);
+			return new ServiceResult<List<CustomerAddress>>(Code.SUCCESS, null, addressList);
+		}else{
+			return new ServiceResult<List<CustomerAddress>>(Code.CUSTOMER_ADDRESS_PARAM_ERROR, Code.CUSTOMER_ADDRESS_PARAM_MSG, null);
+		}
+	}
+
+	@Override
+	public ServiceResult<Long> saveCustomerAddress(String token, CustomerAddress address) {
+		ServiceResult<Integer> serviceResult = saveAddressParamCheck(token,address);
+		Integer customerId = null;
+		if(serviceResult.getCode()!=0){
+			return new ServiceResult<Long>(serviceResult.getCode(), serviceResult.getMessage(),null);
+		}else{
+			long addressId = uniqueGenerate.getId();
+			customerId = serviceResult.getResult();
+			address.setCustomerId(customerId);
+			address.setCustomerAddressId(addressId);
+			address.setCreateTime(DateUtil.getTime());
+			
+			boolean flag = false;
+			if(customerId!=0 && address.getIsDefault()!=null && address.getIsDefault() && StringUtil.isBlank(address.getCookieId())){ //reset default address
+				CustomerAddress resetAddressByCustId = new CustomerAddress();
+				resetAddressByCustId.setCustomerId(customerId);
+				resetAddressByCustId.setIsDefault(false);
+				customerAddressDao.updateCustomerAddress(resetAddressByCustId);
+				
+//				flag = customerAddressDao.updateCustomerAddress(resetAddressByCustId);
+//				if(!flag){
+//					throw new ServiceException(Code.CUSTOMER_DEFAULT_ADDRESS_ERROR, Code.CUSTOMER_DEFAULT_ADDRESS_MSG);
+//				}
+			}else if(customerId==0 && StringUtil.isNotBlank(address.getCookieId()) && address.getIsDefault()!=null && address.getIsDefault()){
+				CustomerAddress resetAddressByCookieId = new CustomerAddress();
+				resetAddressByCookieId.setCookieId(address.getCookieId());
+				resetAddressByCookieId.setCustomerId(0);
+				resetAddressByCookieId.setIsDefault(false);
+				flag = customerAddressDao.updateCustomerAddress(resetAddressByCookieId);
+//				if(!flag){
+//					throw new ServiceException(Code.CUSTOMER_DEFAULT_ADDRESS_ERROR, Code.CUSTOMER_DEFAULT_ADDRESS_MSG);
+//				}
+			}
+			flag = customerAddressDao.saveCustomerAddress(address);
+			return flag?new ServiceResult<Long>(Code.SUCCESS, null, addressId):new ServiceResult<Long>(Code.FAILED, null, null);
+		}
+	}
+
+	@Override
+	public ServiceResult<Boolean> updateCustomerAddress(String token, CustomerAddress address) {
+		if((StringUtil.isBlank(token) && StringUtil.isBlank(address.getCookieId())) && address.getCustomerAddressId()==null){
+			return new ServiceResult<Boolean>(Code.CUSTOMER_ADDRESS_UPDATE_PARAM_ERROR, Code.CUSTOMER_ADDRESS_UPDATE_PARAM_MSG, null);
+		}
+		Integer customerId = null;
+		if(StringUtil.isNotBlank(token)){
+			Object cacheObj = null;//redisCache.getObject(token);
+			if(cacheObj!=null){
+				LoginCredential credential = (LoginCredential)cacheObj;
+				customerId = credential.getCustomerId(); //登录状态的帐号
+				if(customerId==null){
+					return new ServiceResult<Boolean>(Code.CUST_STATE_ERROR, Code.CUST_STATE_MSG, null);
+				}
+			}else{
+				return new ServiceResult<Boolean>(Code.CUST_STATE_ERROR, Code.CUST_STATE_MSG, null);
+			}
+		}else{
+			customerId = 0;
+		}
+		address.setCustomerId(customerId);
+		boolean flag = false;
+		if(customerId!=0 && address.getIsDefault()!=null && address.getIsDefault() && StringUtil.isBlank(address.getCookieId())){ //reset default address
+			CustomerAddress resetAddressByCustId = new CustomerAddress();
+			resetAddressByCustId.setCustomerId(customerId);
+			resetAddressByCustId.setIsDefault(false);
+			customerAddressDao.updateCustomerAddress(resetAddressByCustId);
+//			flag = customerAddressDao.updateCustomerAddress(resetAddressByCustId);
+//			if(!flag){
+//				throw new ServiceException(Code.CUSTOMER_DEFAULT_ADDRESS_ERROR, Code.CUSTOMER_DEFAULT_ADDRESS_MSG);
+//			}
+		}else if(customerId==0 && StringUtil.isNotBlank(address.getCookieId()) && address.getIsDefault()!=null && address.getIsDefault()){
+			CustomerAddress resetAddressByCookieId = new CustomerAddress();
+			resetAddressByCookieId.setCookieId(address.getCookieId());
+			resetAddressByCookieId.setCustomerId(0);
+			resetAddressByCookieId.setIsDefault(false);
+			flag = customerAddressDao.updateCustomerAddress(resetAddressByCookieId);
+			if(!flag){
+				throw new ServiceException(Code.CUSTOMER_DEFAULT_ADDRESS_ERROR, Code.CUSTOMER_DEFAULT_ADDRESS_MSG);
+			}
+		}
+		flag = customerAddressDao.updateCustomerAddress(address);
+		return flag?new ServiceResult<Boolean>(Code.SUCCESS, null, flag):new ServiceResult<Boolean>(Code.FAILED, null, flag);
+	}
+
+	@Override
+	public ServiceResult<Boolean> deleteCustomerAddress(String token,CustomerAddress address) {
+		if((StringUtil.isBlank(token) && StringUtil.isBlank(address.getCookieId())) || address.getCustomerAddressId()==null){
+			return new ServiceResult<Boolean>(Code.CUSTOMER_ADDRESS_UPDATE_PARAM_ERROR, Code.CUSTOMER_ADDRESS_UPDATE_PARAM_MSG, null);
+		}
+		Integer customerId = null;
+		if(StringUtil.isNotBlank(token)){
+			Object cacheObj = null;//redisCache.getObject(token);
+			if(cacheObj!=null){
+				LoginCredential credential = (LoginCredential)cacheObj;
+				customerId = credential.getCustomerId(); //登录状态的帐号
+				if(customerId==null){
+					return new ServiceResult<Boolean>(Code.CUST_STATE_ERROR, Code.CUST_STATE_MSG, null);
+				}
+			}else{
+				return new ServiceResult<Boolean>(Code.CUST_STATE_ERROR, Code.CUST_STATE_MSG, null);
+			}
+		}else{
+			customerId = 0;
+		}
+		address.setCustomerId(customerId);
+		boolean flag = customerAddressDao.deleteCustomerAddress(address);
+		return flag?new ServiceResult<Boolean>(Code.SUCCESS, null, flag):new ServiceResult<Boolean>(Code.FAILED, null, flag);
+	}
+	
+	
+	
+	
+	private ServiceResult<Integer> saveAddressParamCheck(String token, CustomerAddress address){
+		if((StringUtil.isBlank(token) && StringUtil.isBlank(address.getCookieId())) || (address.getCityCode()==null || StringUtil.isBlank(address.getName()) || StringUtil.isBlank(address.getPhone()) || StringUtil.isBlank(address.getAddress()) || address.getIsDefault()==null)){
+			return new ServiceResult<Integer>(Code.CUSTOMER_ADDRESS_SAVE_PARAM_ERROR, Code.CUSTOMER_ADDRESS_SAVE_PARAM_MSG, null);
+		}
+		if(StringUtil.isNotBlank(token)){
+			LoginCredential loginCredential =null;// redisCache.getObject(token);
+			Integer customerId = null;
+			if(loginCredential!=null && loginCredential.getCustomerId()!=null){
+				customerId = loginCredential.getCustomerId();
+				return new ServiceResult<Integer>(Code.SUCCESS, null, customerId);
+			}else{
+				return new ServiceResult<Integer>(Code.CUST_STATE_ERROR, Code.CUST_STATE_MSG, null);
+			}
+		}else{
+			return new ServiceResult<Integer>(Code.SUCCESS, null, 0);
+		}
+	}
+
+	@Override
+	public ServiceResult<CustomerAddress> getCustomerAddress(Long customerAddressId) {
+		if(customerAddressId!=null){
+			CustomerAddress address = new CustomerAddress();
+			address.setCustomerAddressId(customerAddressId);
+			address = customerAddressDao.getCustomerAddress(address);
+			return new ServiceResult<CustomerAddress>(Code.SUCCESS,null,address);
+		}else{
+			return new ServiceResult<CustomerAddress>(Code.CUSTOMER_ADDRESS_DETAIL_PARAM_ERROR, Code.CUSTOMER_ADDRESS_DETAIL_PARAM_MSG, null);
+		}
+	}
+	
+}

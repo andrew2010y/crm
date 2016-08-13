@@ -1,0 +1,106 @@
+/*
+ * 文件名：ResDictRole.java
+ * 版权：时代智囊
+ * 描述：学校学生实体类
+ * 修改人：王宁
+ * 修改时间：2016年7月14日
+ * 修改内容：新增
+
+ */
+package com.sdzn.fuzhuxian.api.domain.model.user;
+
+import java.util.Date;
+
+public class SchoolStudent {
+	private Integer id;
+	private String accountName;
+	private Integer createAccountId;
+	private Date createTime;
+	private Integer schoolId;
+	private String schoolName;
+	private String realName;
+	private String telephone;
+	private String photo;
+	private byte sex;
+
+	public String getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(String photo) {
+		this.photo = photo;
+	}
+
+	public byte getSex() {
+		return sex;
+	}
+
+	public void setSex(byte sex) {
+		this.sex = sex;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	public Integer getCreateAccountId() {
+		return createAccountId;
+	}
+
+	public void setCreateAccountId(Integer createAccountId) {
+		this.createAccountId = createAccountId;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public Integer getSchoolId() {
+		return schoolId;
+	}
+
+	public void setSchoolId(Integer schoolId) {
+		this.schoolId = schoolId;
+	}
+
+	public String getSchoolName() {
+		return schoolName;
+	}
+
+	public void setSchoolName(String schoolName) {
+		this.schoolName = schoolName;
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+
+	public String getTelephone() {
+		return telephone;
+	}
+
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+
+}

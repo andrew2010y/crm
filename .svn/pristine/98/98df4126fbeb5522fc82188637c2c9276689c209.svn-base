@@ -1,0 +1,206 @@
+/**
+ * 文件名：UserSchoolStudentController
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述：
+ * 修改人：王宁
+ * 修改时间：16/7/14
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.controller.user;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.sdzn.fuzhuxian.api.controller.BaseController;
+import com.sdzn.fuzhuxian.api.controller.JsonResultBuilder;
+import com.sdzn.fuzhuxian.api.controller.Status;
+import com.sdzn.fuzhuxian.api.domain.model.user.SchoolStudent;
+import com.sdzn.fuzhuxian.api.service.user.SchoolStudentService;
+
+/**
+ * UserSchoolStudentController〈学校学生〉
+ * 
+ * @author nw
+ * @version v1.0.0
+ * @see ［相关类/方法］
+ * @since 产品/模块版本
+ */
+@Controller
+@RequestMapping("/user/schoolstudent")
+public class UserSchoolStudentController extends BaseController {
+
+	@Autowired
+	private SchoolStudentService studentService;
+
+	private static final int FAIL = 0;
+
+	/**
+	 * 获取所有的学校学生列表
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping("/list")
+	public void getAdminAll(HttpServletRequest request,
+			HttpServletResponse response) {
+
+		resultBuilder = new JsonResultBuilder();
+		List<SchoolStudent> list = new ArrayList<SchoolStudent>();
+		try {
+
+			list = studentService.selectAll();
+		} catch (Exception e) {
+
+			logger.error(e.toString());
+		}
+		this.doResponse(request, response, list);
+
+	}
+
+	/**
+	 * 添加学校学生
+	 * 
+	 * @param request
+	 * @param response
+	 * @param schoolAdmin
+	 */
+	@RequestMapping("/add")
+	public void insertAdmin(HttpServletRequest request,
+			HttpServletResponse response, SchoolStudent schoolStudent) {
+
+		resultBuilder = new JsonResultBuilder();
+		if (!insertValidate(schoolStudent)) {
+			resultBuilder.setStatus(Status.PARSE_PARAMETERS_ERROR);
+		} else {
+
+			int row = studentService.insertStudent(schoolStudent);
+			if (row == FAIL) {
+				resultBuilder.setStatus(Status.DB_OPERATION_ERROR);
+			}
+		}
+		doResponse(request, response);
+
+	}
+
+	/**
+	 * 修改学校学生
+	 * 
+	 * @param request
+	 * @param response
+	 * @param schoolAdmin
+	 */
+	@RequestMapping("/update")
+	public void updateAdmin(HttpServletRequest request,
+			HttpServletResponse response, SchoolStudent schoolStudent) {
+
+		resultBuilder = new JsonResultBuilder();
+
+		if (!updateValidate(schoolStudent)) {
+			resultBuilder.setStatus(Status.PARSE_PARAMETERS_ERROR);
+		} else {
+
+			try {
+				if (FAIL == studentService.updateStudent(schoolStudent)) {
+
+					resultBuilder.setStatus(Status.DB_OPERATION_ERROR);
+				}
+
+			} catch (Exception e) {
+
+				resultBuilder.setStatus(Status.DB_OPERATION_ERROR);
+				logger.error(e.toString());
+			}
+
+		}
+
+		doResponse(request, response);
+
+	}
+
+	/**
+	 * 删除学校学生
+	 * 
+	 * @param request
+	 * @param response
+	 * @param schoolAdmin
+	 */
+	@RequestMapping("/deleteAdmin")
+	public void deleteadmin(HttpServletRequest request,
+			HttpServletResponse response, @RequestParam String id) {
+
+		resultBuilder = new JsonResultBuilder();
+
+		if (!deleteValidate(id)) {
+
+			resultBuilder.setStatus(Status.PARSE_PARAMETERS_ERROR);
+		} else {
+
+			try {
+
+				if (FAIL == studentService.deleteStudent(Integer.parseInt(id))) {
+
+					resultBuilder.setStatus(Status.DB_OPERATION_ERROR);
+				}
+			} catch (Exception e) {
+
+				resultBuilder.setStatus(Status.DB_OPERATION_ERROR);
+				logger.error(e.toString());
+				e.printStackTrace();
+				e.printStackTrace();
+			}
+		}
+		doResponse(request, response);
+
+	}
+
+	private boolean updateValidate(SchoolStudent student) {
+
+		if (student == null)
+			return false;
+
+		if (StringUtils.isBlank(student.getAccountName()))
+			return false;
+
+		if (StringUtils.isBlank(student.getRealName()))
+			return false;
+
+		if (StringUtils.isBlank(student.getSchoolName()))
+			return false;
+
+		return true;
+	}
+
+	private boolean insertValidate(SchoolStudent student) {
+
+		if (student == null)
+			return false;
+
+		if (StringUtils.isBlank(student.getAccountName()))
+			return false;
+
+		if (StringUtils.isBlank(student.getRealName()))
+			return false;
+
+		if (StringUtils.isBlank(student.getSchoolName()))
+			return false;
+
+		return true;
+	}
+
+	private boolean deleteValidate(String id) {
+
+		if (StringUtils.isBlank(id))
+			return false;
+
+		return true;
+	}
+}

@@ -1,0 +1,32 @@
+/**
+ * 文件名：UserAdminDao
+ * 版权：Copyright 2016-2027 SDZN. All Rights Reserved.
+ * 描述：管理员信息
+ * 修改人： yanxk
+ * 修改时间：2016-07-15
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.domain.dao.user;
+
+import com.sdzn.fuzhuxian.api.domain.model.user.UserAdmin;
+
+/**
+ * AccountDao
+ * <p>
+ * 管理员信息
+ * 
+ * @author yanxk 2016年7月15日
+ * @see
+ * @since 1.0
+ */
+public interface UserAdminDao {
+
+	int insert(UserAdmin record);
+	
+	UserAdmin selectById(Integer id);
+	
+	int update(UserAdmin record);
+	
+	int delete(Integer id);
+ 
+}

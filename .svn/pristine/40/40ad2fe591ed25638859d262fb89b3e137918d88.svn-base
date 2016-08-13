@@ -1,0 +1,77 @@
+/**
+ * 文件名：SchoolTeacherService
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述： 学校教师
+ * 修改人：王宁
+ * 修改时间：2016-07-14
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.service.user;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sdzn.fuzhuxian.api.domain.dao.user.SchoolTeacherDao;
+import com.sdzn.fuzhuxian.api.domain.model.user.SchoolTeacher;
+
+/**
+ * SchoolTeacherService
+ * 
+ * 学校老师
+ * 
+ * @author 王宁 2016年7月14日
+ * @see
+ * @since 1.0
+ */
+@Service
+public class SchoolTeacherService {
+	@Autowired
+	private SchoolTeacherDao teacherDao;
+
+	/**
+	 * 查询学校老师列表
+	 * 
+	 * @return
+	 */
+	public List<SchoolTeacher> selectAll() {
+		System.out.println(teacherDao);
+		return teacherDao.selectAll();
+
+	}
+
+	/**
+	 * 添加学校老师
+	 * 
+	 * @param schoolAdmin
+	 * @return
+	 */
+	public int insertTeacher(SchoolTeacher teacher) {
+		System.out.print(teacherDao);
+		return teacherDao.insert(teacher);
+	}
+
+	/**
+	 * 删除老师账号
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public int deleteTeacher(Integer id) {
+		System.out.print(teacherDao);
+		return teacherDao.deleteById(id);
+
+	}
+
+	/**
+	 * 修改老师账户
+	 * 
+	 * @param admin
+	 * @return
+	 */
+	public int updateTeacher(SchoolTeacher teacher) {
+		return teacherDao.updateById(teacher);
+
+	}
+}

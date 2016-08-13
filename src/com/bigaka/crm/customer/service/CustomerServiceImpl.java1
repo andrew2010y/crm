@@ -1,0 +1,987 @@
+package com.bigaka.crm.customer.service;
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
+
+import com.bigaka.crm.common.assist.ServiceException;
+import com.bigaka.crm.common.model.CSBParam;
+import com.bigaka.crm.common.model.Code;
+import com.bigaka.crm.common.model.Constant.CodeType;
+import com.bigaka.crm.common.model.Page;
+import com.bigaka.crm.common.model.ServiceResult;
+import com.bigaka.crm.common.service.CommonService;
+import com.bigaka.crm.common.service.MQService;
+import com.bigaka.crm.common.service.WechatMsgTmplService;
+import com.bigaka.crm.common.util.CodecUtil;
+import com.bigaka.crm.common.util.DateUtil;
+import com.bigaka.crm.common.util.JsonUtil;
+import com.bigaka.crm.common.util.RandomUtil;
+import com.bigaka.crm.common.util.StringUtil;
+import com.bigaka.crm.coupon.model.StoreSearch;
+import com.bigaka.crm.coupon.service.CouponExpandService;
+import com.bigaka.crm.customer.dao.CustomerAddressDao;
+import com.bigaka.crm.customer.dao.CustomerCountDao;
+import com.bigaka.crm.customer.dao.CustomerDao;
+import com.bigaka.crm.customer.dao.CustomerDetailDao;
+import com.bigaka.crm.customer.dao.CustomerExpandDao;
+import com.bigaka.crm.customer.model.Customer;
+import com.bigaka.crm.customer.model.Customer.RegisterChannel;
+import com.bigaka.crm.customer.model.Customer.RegisterType;
+import com.bigaka.crm.customer.model.Customer.ThirdSupportKey;
+import com.bigaka.crm.customer.model.CustomerAddress;
+import com.bigaka.crm.customer.model.CustomerDetail;
+import com.bigaka.crm.customer.model.CustomerPointChannelEnum;
+import com.bigaka.crm.customer.model.LoginCredential;
+import com.bigaka.crm.form.model.FormCustomerProp;
+import com.bigaka.crm.form.service.FormCustomerPropService;
+import com.bigaka.crm.membershipcard.model.MembershipCode;
+import com.bigaka.crm.membershipcard.service.MembershipCardService;
+import com.bigaka.crm.pointlog.model.PointLog;
+import com.bigaka.crm.service.assist.UniqueGenerate;
+import com.bigaka.crm.setting.model.PointSettingEnum;
+import com.bigaka.crm.setting.service.SocialSettingService;
+import com.bigaka.crm.setting.service.StorePointSettingService;
+import com.bigaka.crm.wechat.service.AccessAuthService;
+
+/**
+ * 顾客标签管理
+ * @author Dylan_Tao
+ * @date 2015-12-01
+ * Copyright 2015 bigaka.com. All Rights Reserved. 
+ */
+@Service("customerService")
+public class CustomerServiceImpl implements CustomerService{
+	 
+	private static final Log log = LogFactory.getLog(CustomerServiceImpl.class);
+	
+	@Value("#{config['pub.cloud.ck.account.url']}")
+	private String ckAccountUrl;
+	
+
+
+	@Autowired
+	private UniqueGenerate uniqueGenerate;
+	/*@Autowired
+	private RedisCache redisCache;
+	@Autowired
+	private RestTemplate restTemplate;*/
+/*	@Autowired
+	private PointLogDao  pointLogDao;*/
+	/*@Autowired
+	private CommonService commonService;*/
+/*	@Autowired
+	private CustomerCountService customerCountService;*/
+	
+/*	@Autowired
+	private CouponExpandService couponExpandService;
+	@Autowired
+	private AccessAuthService accessAuthService;
+	@Autowired
+	private SocialSettingService socialSettingService;
+	@Autowired
+	private FormCustomerPropService formCustomerDetailService;
+	@Autowired
+	private CustomerExpandService customerExpandService;
+	@Autowired
+	private CustomerDetailService customerDetailService;
+	@Autowired
+	private ThreadPoolTaskExecutor asyncThread;
+	@Autowired
+	private StorePointSettingService storePointSettingService;
+	@Autowired
+	private WechatMsgTmplService wechatMsgTmplService;
+	@Autowired
+	private MembershipCardService membershipCardService;
+	@Autowired
+	private CustomerExpandDao customerExpandDao;
+	@Autowired
+	private MQService mQService;
+	@Autowired
+	private CustomerAddressDao customerAddressDao;*/
+	
+	@Value("#{config['pub.cloud.register.award.coupon.url']}")
+	private String awardCouponUrl;
+
+	protected ServiceResult<HashMap<String, Object>> resultMap;
+	
+	@Override
+	public ServiceResult<LoginCredential> registerCustomer(Customer customer) {
+		log.info("registerCustomer:"+JsonUtil.toJson(customer));
+		ServiceResult<LoginCredential> ServiceResult = registerParamCheck(customer); //参数验证
+		if(ServiceResult.getCode() != Code.SUCCESS){
+			return ServiceResult;
+		}
+		String openId = customer.getOpenId();
+		customer.setOpenId(null);
+		Customer custData = customerDao.getCustomer(customer); //check global user exist
+		if(custData!=null && custData.getCustomerId()!=null){
+			LoginCredential credential = new LoginCredential();
+			credential.setCustomerId(custData.getCustomerId());
+			credential.setPoint(custData.getPoint());
+			return new ServiceResult<LoginCredential>(Code.CUST_HAS_EXIST, Code.CUST_HAS_EXIST_MSG, credential);
+		}
+		
+		customer.setRegisterType(RegisterType.PHONE);//手机号码注册
+		long time = DateUtil.getTime(); 
+		customer.setCreateTime(time);
+		String password = null;
+		if(customer.getRegisterChannel().equals(RegisterChannel.DATACENTER)){ //数据中心注册则强制设置初始密码
+			password = RandomUtil.randomKey();
+			customer.setPassword(password);
+		}
+		if(!customer.getRegisterChannel().equals(RegisterChannel.CK)&&
+				!customer.getRegisterChannel().equals(RegisterChannel.SALVE_SHOP)){ //创客源和2B商城会员注册 密码为密文，不做处理
+			customer.setPassword(CodecUtil.encodeMD5(customer.getPassword(), true, CodeType.UTF8));
+		}
+		customer.setOpenId(openId);
+		int customerId = customerDao.saveCustomer(customer);
+		
+		log.info("customerId"+customerId);
+		
+		if(customerId<=0){
+			throw new ServiceException(Code.CUSTOMER_SAVE_ERROR, Code.CUSTOMER_SAVE_MSG);
+		}
+		customer.setCustomerId(customerId);
+		
+		CustomerDetail detail = new CustomerDetail();
+		detail.setCustomerId(customerId);
+		detail.setPhone(customer.getUsername());
+		detail.setCreateTime(time);
+		detail.setVipCardNo(customer.getVipCardNo());
+		detail.setName(customer.getName());
+		detail.setSex(customer.getSex()!=null?customer.getSex():0);
+		detail.setAreaCode(customer.getAreaCode()!=null?customer.getAreaCode():0);
+		detail.setRemark(customer.getRemark());
+		detail.setNickName(customer.getNickName());
+		if(StringUtil.isNotBlank(customer.getBirthDate())){
+			Long date = DateUtil.getMinDate(customer.getBirthDate());
+			detail.setBirthDate(date==null?0L:date);
+		}else{
+			detail.setBirthDate(0L);
+		}
+		boolean detail_flag = customerDetailDao.saveCustomerDetail(detail);
+		if(!detail_flag){
+			throw new ServiceException(Code.CUSTOMER_DETAIL_ERROR, Code.CUSTOMER_DETAIL_MSG);
+		}
+		boolean count_flag = customerCountDao.saveCustomerCount(customerId);
+		if(!count_flag){
+			throw new ServiceException(Code.CUSTOMER_COUNT_ERROR, Code.CUSTOMER_COUNT_MSG);
+		}
+		//初始化会员卡号
+		MembershipCode code = new MembershipCode();
+		code.setMembershipId(0L);
+		code.setCustomerId(String.valueOf(customerId));
+		code.setCreateTime(DateUtil.getTime());
+		code.setStoreId(customer.getParentStoreId());
+		boolean boo =false;// membershipCardService.createMemberShipCode(code).getResult();
+		if(!boo){
+			throw new ServiceException(Code.FAILED, "发放会员卡号失败~!");
+		}
+		
+		boolean expend_flag =false;// customerExpandDao.setExpandInfo(customer.getStoreId(), customerId);
+		if(!expend_flag){
+			throw new ServiceException(Code.FAILED, "初始化会员的状态记录失败~!");
+		}
+		
+		LoginCredential credential = new LoginCredential();
+		credential.setParentStoreId(customer.getParentStoreId());
+		credential.setStoreId(customer.getStoreId());
+		credential.setCustomerId(customerId);
+		credential.setPhone(customer.getUsername());
+		
+		//赠送积分与优惠券并发送短信
+		awardScoreAndCoupon(customer,false);
+		
+		//添加到MQ
+		if(customer.getSysnCSB() && customer.getStoreId()!=null){
+			CSBParam<Customer> param = new CSBParam<Customer>();
+			param.setStoreid(String.valueOf(customer.getStoreId()));
+			param.setModel("user");
+			param.setMethod("mallRegisterCustomer");
+			param.setMsg(customer);
+			ServiceResult<String> mqResult = null;//mQService.sendMsg(param);
+			if(StringUtil.isBlank(mqResult.getResult())){
+				log.error("注册会员或审核会员，同步到线下时，放入MQ队列失败："+JsonUtil.toJson(mqResult));
+			}
+		}		
+		
+		if(customer.getRegisterChannel().equals(RegisterChannel.MALL)){ //微商城
+			String token = uniqueGenerate.getToken();
+			return keepUserState(credential, customer,token); //keep user state
+		}
+		
+		return new ServiceResult<LoginCredential>(Code.SUCCESS, "", credential);
+	}
+	
+	
+	
+	
+	@Override
+	public ServiceResult<LoginCredential> loginCustomer(Customer customer) {
+		
+		log.info("loginCustomer："+JsonUtil.toJson(customer));
+	
+		ServiceResult<LoginCredential> ServiceResult = loginParamCheck(customer); //参数验证
+		Long phone = customer.getUsername();
+		if(ServiceResult.getCode() != Code.SUCCESS){
+			return ServiceResult;
+		}else{
+			if(customer.getRegisterType()==RegisterType.WEIXIN){
+				customer.setUsername(null);
+			}
+		}
+		Customer custData = customerDao.getCustomer(customer);
+		
+		if(custData==null){ //用户不存在
+			if(customer.getRegisterType()==RegisterType.PHONE){ //手机号码登录时为空则返回用户不存在
+				return new ServiceResult<LoginCredential>(Code.CUST_USER_NOT_EXISTS, Code.CUST_USER_NOT_EXISTS_MSG, null);
+			}else if(customer.getRegisterType()==RegisterType.WEIXIN){ //微信授权时赋值商家id
+				custData = new Customer();
+				custData.setParentStoreId(customer.getParentStoreId());
+				custData.setStoreId(customer.getStoreId());
+			}
+		}
+		if(custData.getState()!=null && custData.getState()==1){ //冻结
+			return new ServiceResult<LoginCredential>(Code.CUST_STOP_STATE, Code.CUST_STOP_STATE_MSG, null);
+		}
+		
+		LoginCredential credential = new LoginCredential();
+		credential.setParentStoreId(custData.getParentStoreId());
+		credential.setStoreId(customer.getStoreId());
+		credential.setCustomerId(custData.getCustomerId());
+		credential.setPhone(custData.getPhone());
+		credential.setName(custData.getName());
+		credential.setLogo(custData.getLogo());
+		
+		if(customer.getRegisterType()==RegisterType.PHONE){
+			String password = customer.getPassword();
+			if(password.equals(custData.getPassword())){ //auth pwd
+				String token = uniqueGenerate.getToken();
+				//计算完善度
+				CustomerDetail detail = new CustomerDetail();
+				detail.setCustomerId(custData.getCustomerId());
+				detail.setSendFlag(false);
+				perfectDegree(detail);
+				
+				return keepUserState(credential, customer,token); //keep user state 
+			}else{
+				return new ServiceResult<LoginCredential>(Code.CUST_LOGIN_PWD_ERROR, Code.CUST_LOGIN_PWD_MSG);
+			}
+		}else if(customer.getRegisterType()==RegisterType.WEIXIN){
+			if(StringUtil.isNotBlank(custData.getOpenId())){
+				//计算完善度
+				CustomerDetail detail = new CustomerDetail();
+				detail.setCustomerId(custData.getCustomerId());
+				detail.setSendFlag(false);
+				perfectDegree(detail);
+				
+				String token = uniqueGenerate.getToken();
+				return keepUserState(credential, customer,token); //keep user state
+			}else{ //create account
+				customer.setUsername(phone==null?0L:phone);
+				customer.setRegisterType(RegisterType.WEIXIN);//微信注册
+				long time = DateUtil.getTime(); 
+				customer.setCreateTime(time);
+				int customerId = customerDao.saveCustomer(customer);
+				if(customerId<=0){
+					throw new ServiceException(Code.CUSTOMER_SAVE_ERROR, Code.CUSTOMER_SAVE_MSG);
+				}
+				CustomerDetail detail = new CustomerDetail();
+				detail.setCustomerId(customerId);
+				detail.setPhone(phone==null?0L:phone);
+				detail.setLevel((short) 0);
+				detail.setSex((byte) 0);
+				detail.setAreaCode(0);
+				detail.setBirthDate(0L);
+				detail.setCreateTime(time);
+				boolean detail_flag = customerDetailDao.saveCustomerDetail(detail);
+				if(!detail_flag){
+					throw new ServiceException(Code.CUSTOMER_DETAIL_ERROR, Code.CUSTOMER_DETAIL_MSG);
+				}
+				boolean count_flag = customerCountDao.saveCustomerCount(customerId);
+				if(!count_flag){
+					throw new ServiceException(Code.CUSTOMER_COUNT_ERROR, Code.CUSTOMER_COUNT_MSG);
+				}
+				credential.setCustomerId(customerId);
+				
+				//初始化会员卡号
+				MembershipCode code = new MembershipCode();
+				code.setMembershipId(0L);
+				code.setStoreId(customer.getParentStoreId());
+				code.setCustomerId(String.valueOf(customerId));
+				code.setCreateTime(DateUtil.getTime());
+				boolean boo = membershipCardService.createMemberShipCode(code).getResult();
+				if(!boo){
+					throw new ServiceException(Code.FAILED, "发放会员卡号失败~!");
+				}
+				
+				boolean expend_flag = customerExpandDao.setExpandInfo(customer.getStoreId(), customerId);
+				if(!expend_flag){
+					throw new ServiceException(Code.FAILED, "初始化会员的状态记录失败~!");
+				}
+				
+				//计算完善度
+				detail.setSendFlag(false);
+				perfectDegree(detail);
+				
+				String token = uniqueGenerate.getToken();
+				return keepUserState(credential, customer,token); //keep user state
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	public ServiceResult<String> logoutCustmer(String token) {
+		boolean flag = true;//redisCache.rmObject(token);
+		return flag ? new ServiceResult<String>(Code.SUCCESS) : new ServiceResult<String>(Code.FAILED);
+	}
+	
+	@Override
+	public ServiceResult<String> changeCustomerPwd(String token, String oldPwd, String newPwd) {
+		if(StringUtil.isBlank(token) || StringUtil.isBlank(oldPwd) || StringUtil.isBlank(newPwd)){
+			return new ServiceResult<String>(Code.CHANGE_PWD_ERROR, Code.CHANGE_PWD_MSG, null);
+		}
+		Object cacheObj = null;//redisCache.getObject(token);
+		if(cacheObj!=null){
+			LoginCredential credential = (LoginCredential)cacheObj;
+			Integer customerId = credential.getCustomerId();
+			if(customerId==null){
+				return new ServiceResult<String>(Code.CUST_STATE_ERROR, Code.CUST_STATE_MSG, null);
+			}
+			Customer customer = new Customer();
+			customer.setCustomerId(customerId);
+			Customer custDB = customerDao.getCustomer(customer);
+			if(custDB.getPassword()==null || (custDB!=null && oldPwd.equals(custDB.getPassword()))){
+				customer.setPassword(CodecUtil.encodeMD5(newPwd, true, CodeType.UTF8));
+				//更改密码
+				boolean flag = customerDao.updateCustomer(customer);
+				if(flag){
+					//发送修改密码的模版消息
+					wechatMsgTmplService.sendWheatMsgForChangePwd(custDB);
+					return new ServiceResult<String>(Code.SUCCESS, null, null);
+				}else{
+					return new ServiceResult<String>(Code.FAILED, "密码修改失败!", null);
+				}
+			}else{
+				return new ServiceResult<String>(Code.CUST_LOGIN_PWD_ERROR, Code.CUST_LOGIN_PWD_MSG, null);
+			}
+		}else{
+			return new ServiceResult<String>(Code.CUST_STATE_ERROR, Code.CUST_STATE_MSG, null);
+		}
+	}
+	
+	@Override
+	public ServiceResult<String> resetCustomerPwd(Integer parentStoreId, Long phone, String newPwd) {
+		if(parentStoreId==null || phone==null || StringUtil.isBlank(newPwd)){
+			return new ServiceResult<String>(Code.CHANGE_PWD_PARAME_ERROR, Code.CHANGE_PWD_PARAME_MSG, null);
+		}
+		Customer customer = new Customer();
+		customer.setParentStoreId(parentStoreId);
+		customer.setUsername(phone);
+		customer.setPassword(CodecUtil.encodeMD5(newPwd, true, CodeType.UTF8));
+		customer.setUpdateTime(DateUtil.getTime());
+		boolean flag = customerDao.updateCustomerPwd(customer);
+		return flag?new ServiceResult<String>(Code.SUCCESS, null, null):new ServiceResult<String>(Code.FAILED, "修改帐号密码失败!", null);
+	}
+	
+	@Override
+	public ServiceResult<Integer> bindCustomerPhone(String openId, Long phone, Integer parentStoreId) {
+		
+		log.info("bindCustomerPhone~ openId："+openId+" phone: "+phone+" parentStoreId:"+parentStoreId);
+		log.info("bindCustomerPhone ~ coming!");
+		Integer returnCustId = null;
+		if(StringUtil.isBlank(openId) || phone==null || parentStoreId == null){
+			return new ServiceResult<Integer>(Code.BIND_PHONE_ERROR, Code.BIND_PHONE_MSG, null);
+		}
+			Customer customer = new Customer();
+			customer.setParentStoreId(parentStoreId);
+			customer.setUsername(phone);
+			Customer phoneCustomer = customerDao.getCustomer(customer);
+			customer = new Customer();
+			customer.setParentStoreId(parentStoreId);
+			customer.setOpenId(openId);
+			Customer openIdCustomer = customerDao.getCustomer(customer);
+			
+			Customer csbSysn = new Customer();
+			if(phoneCustomer!=null && phoneCustomer.getCustomerId()!=null && openIdCustomer!=null && openIdCustomer.getCustomerId()!=null){
+				log.info("bindCustomerPhone ~ all not null!");
+				if(!openIdCustomer.getCustomerId().equals(phoneCustomer.getCustomerId())){ // !equal()
+					//删除openId的帐号，将openId更新到此手机号下
+					returnCustId = phoneCustomer.getCustomerId();
+					customer.setCustomerId(returnCustId);
+					customer.setOpenId(openId);
+					boolean flag = customerDao.updateCustomer(customer); //将openId与已有手机帐号绑定
+					if(!flag){
+						throw new ServiceException(Code.BIND_OPEN_ID_ERROR, Code.BIND_OPEN_ID_MSG);
+					}
+					//同步到csb的标识
+					csbSysn.setStoreId(phoneCustomer.getStoreId());
+					
+					//并删除当前用户
+					customer = new Customer();
+					Integer customerId = openIdCustomer.getCustomerId();
+					customer.setCustomerId(customerId);
+					boolean del_customer_flag = customerDao.delCustomer(customer);
+					CustomerDetail detail = new CustomerDetail();
+					detail.setCustomerId(customerId);
+					boolean del_detail_flag = customerDetailDao.delCustomerDetail(detail);
+					boolean del_count_flag = customerCountDao.delCustomerCount(customerId);
+					
+					log.info("bindCustomerPhone ~ not equal - remove customerId: !"+ customerId + "update customerId:" + returnCustId);
+					if(!del_customer_flag || !del_detail_flag || !del_count_flag){
+						throw new ServiceException(Code.DEL_CUSTOMER_ERROR, Code.DEL_CUSTOMER_MSG);
+					}
+					
+				}else{ // equal()
+					returnCustId = phoneCustomer.getCustomerId();
+				}
+			}else if(phoneCustomer!=null && phoneCustomer.getCustomerId()!=null && openIdCustomer==null){
+				//更新openId到此手机号下
+				returnCustId = phoneCustomer.getCustomerId();
+				customer.setCustomerId(returnCustId);
+				customer.setOpenId(openId);
+				boolean flag = customerDao.updateCustomer(customer); 
+				if(!flag){
+					throw new ServiceException(Code.BIND_OPEN_ID_ERROR, Code.BIND_OPEN_ID_MSG);
+				}
+				
+				//同步到csb的标识
+				csbSysn.setStoreId(phoneCustomer.getStoreId());
+				
+				//重新获取会员信息
+				Customer getCustomer=new Customer();
+				getCustomer.setCustomerId(customer.getCustomerId());
+				customer=customerDao.getCustomer(getCustomer);
+				//首次绑定微信赠送积分
+				customerExpandService.updateFirstFollowWechat(customer.getStoreId(),customer.getCustomerId());
+				
+			}else if(openIdCustomer!=null && openIdCustomer.getCustomerId()!=null && phoneCustomer==null){
+				//更新手机号到此openId下
+				returnCustId = openIdCustomer.getCustomerId();
+				customer.setCustomerId(returnCustId);
+				customer.setUsername(phone);
+				boolean flag = customerDao.updateCustomer(customer); 
+				if(!flag){
+					throw new ServiceException(Code.BIND_PHONE_TO_OPEN_ERROR, Code.BIND_PHONE_TO_OPEN_MSG);
+				}
+				
+				//同步到csb的标识
+				csbSysn.setStoreId(openIdCustomer.getStoreId());
+				
+				//更新顾客详情的手机号码
+				CustomerDetail detail = new CustomerDetail();
+				detail.setCustomerId(returnCustId);
+				detail.setPhone(phone);
+				boolean detail_flag = customerDetailDao.updateCustomerDetail(detail);
+				if(!detail_flag){
+					throw new ServiceException(Code.UPDATE_PHONE_ERROR, Code.UPDATE_PHONE_MSG);
+				}
+				Customer getCustomer=new Customer();
+				getCustomer.setCustomerId(customer.getCustomerId());
+				//重新获取会员信息
+				customer=customerDao.getCustomer(getCustomer);
+				
+				//重写赠送积分日志记录渠道为微商城渠道
+				customer.setChannel(Byte.parseByte("1"));
+				//新手机号首次注册赠送积分 
+				awardScoren(customer);
+				//首次绑定微信赠送积分
+			    customerExpandService.updateFirstFollowWechat(customer.getStoreId(),customer.getCustomerId());
+			}
+			
+			if(csbSysn.getStoreId()!=null && phone!=null && StringUtil.isNotBlank(openId)){
+				csbSysn.setUsername(phone);
+				csbSysn.setOpenId(openId);
+				CSBParam<Customer> param = new CSBParam<Customer>();
+				param.setStoreid(String.valueOf(csbSysn.getStoreId()));
+				param.setModel("user");
+				param.setMethod("crmCustomerBind");
+				param.setMsg(csbSysn);
+				ServiceResult<String> mqResult = mQService.sendMsg(param);
+				if(StringUtil.isBlank(mqResult.getResult())){
+					log.error("后台手机号码和微信opneId绑定时，同步到线下时，放入MQ队列失败："+JsonUtil.toJson(mqResult));
+				}
+			}
+			
+			return new ServiceResult<Integer>(Code.SUCCESS, null, returnCustId);
+	}
+	
+	/**
+	 * 绑定手机号时，新手机号赠送积分
+	 * @param customer
+	 * @return
+	 */
+	public ServiceResult<Boolean> awardScoren(final Customer customer) {
+		
+		asyncThread.execute(new Runnable() {
+			@Override
+			public void run() {
+				
+				ServiceResult<Integer> pointSetting =  storePointSettingService.getPoinSetting(PointSettingEnum.REGISTER, customer.getParentStoreId());
+				Integer value = 0;
+				if(pointSetting.getCode()==0){
+					value = pointSetting.getResult();
+					PointLog pointLog = new PointLog();
+					pointLog.setStoreId(customer.getStoreId());
+					pointLog.setCustomerId(customer.getCustomerId());
+					pointLog.setOperation(true);
+					pointLog.setValue(value);
+					pointLog.setOrderId(0);
+					pointLog.setConsumeChannel((int)customer.getChannel());
+					ServiceResult<Boolean> result = customerDetailService.updateCustPoint(pointLog, CustomerPointChannelEnum.REGISTER);
+					if(result.getCode()!=0){
+						log.error("绑定新手机号赠送积分失败~"+result.getMessage());
+					}
+				}else{
+					log.error(pointSetting.getMessage());
+				}				
+		
+			}
+		});
+				
+		return new ServiceResult<Boolean>(Code.SUCCESS, "发放积分优惠券成功！", true);
+	}
+
+	
+	@Override
+	public ServiceResult<Boolean> changeCustomerPhone(Integer parentStoreId, Long oldPhone ,Long newPhone) {
+		if(parentStoreId!=null && oldPhone!=null && newPhone!=null){
+			Customer customer = new Customer();
+			customer.setParentStoreId(parentStoreId);
+			customer.setUsername(oldPhone);
+			Customer oldCust = customerDao.getCustomer(customer);
+			if(oldCust!=null && oldCust.getCustomerId()!=null){ //此商户下存在此手机号码的用户
+				customer = new Customer();
+				customer.setParentStoreId(parentStoreId);
+				customer.setUsername(newPhone);
+				Customer newCust = customerDao.getCustomer(customer);
+				if(newCust!=null && newCust.getCustomerId()!=null){ //此商户下存在此手机号码的用户
+					if(newCust.getCustomerId() == oldCust.getCustomerId()){
+						return new ServiceResult<Boolean>(Code.BIND_PHONE_ECHO_ERROR, Code.BIND_PHONE_ECHO_MSG, null);
+					}else{
+						return new ServiceResult<Boolean>(Code.CUSTOMER_CHANGE_PHONE_ERROR, Code.CUSTOMER_CHANGE_PHONE_MSG, null);
+					}
+				}else{
+					customer.setCustomerId(oldCust.getCustomerId());
+					customer.setUsername(newPhone);
+					boolean flag = customerDao.updateCustomer(customer); //将帐号替换为新绑定的手机号码
+					return flag ? new ServiceResult<Boolean>(Code.SUCCESS, null, null):new ServiceResult<Boolean>(Code.FAILED, "修改手机号码失败!", null);
+				}
+			}else{
+				return new ServiceResult<Boolean>(Code.CUST_USER_NOT_EXISTS, Code.CUST_USER_NOT_EXISTS_MSG, null);
+			}
+		}else{
+			return new ServiceResult<Boolean>(Code.CUSTOMER_CHANGE_PHONE_PARAM_ERROR, Code.CUSTOMER_CHANGE_PHONE_PARAM_MSG, null);
+		}
+	}
+	
+	private ServiceResult<LoginCredential> keepUserState(LoginCredential credential,Customer customer,String token){
+		
+		credential.setOpenId(customer.getOpenId());
+		credential.setLoginChannel(customer.getRegisterChannel());
+		credential.setLoginType(customer.getRegisterType());
+		credential.setToken(token);
+		
+		boolean redis_flag = true;//redisCache.putObject(token, credential);
+		if(!redis_flag){
+			log.error("用户状态保存到Redis失败! username：" + customer.getUsername());
+			return new ServiceResult<LoginCredential>(Code.CUST_LOGIN_STATE_ERROR, Code.CUNT_LOGIN_STATE_MSG);
+		}
+		return new ServiceResult<LoginCredential>(Code.SUCCESS, "", credential);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private void registerCkAccount(Integer storeId,Long phone){
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		
+		MultiValueMap<String, Object> paramMap = new LinkedMultiValueMap<String, Object>();
+		paramMap.add("storeId", storeId+"");
+		paramMap.add("phone", phone+""); 
+		HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(paramMap, headers);
+		ServiceResult ServiceResult;
+		try {
+			ResponseEntity<ServiceResult> entity = null;//restTemplate.postForEntity(ckAccountUrl, request, ServiceResult.class);
+			ServiceResult = entity.getBody();
+			if(ServiceResult!=null && ServiceResult.getCode()!=0){
+				log.error("同步到创客源的帐号失败! storeId：" + storeId + "phone：" + phone+" cause："+ServiceResult.getMessage());
+			}
+		} catch (RestClientException e) {
+			log.error("同步创客源帐号的接口异常：" + e);
+		}
+	}
+	
+	private ServiceResult<LoginCredential> registerParamCheck(Customer customer){
+		if(customer==null || customer.getParentStoreId()==null || customer.getStoreId()==null || customer.getUsername()==null || customer.getRegisterChannel()==null || (StringUtil.isBlank(customer.getPassword()) && !customer.getRegisterChannel().equals(RegisterChannel.DATACENTER))){
+			return new ServiceResult<LoginCredential>(Code.CUST_REG_PARAM_ERROR, Code.CUST_REG_PARAM_MSG);
+		}
+		return new ServiceResult<LoginCredential>(Code.SUCCESS);
+	}
+	
+	private ServiceResult<LoginCredential> loginParamCheck(Customer customer){
+		if(customer==null || customer.getStoreId()==null || customer.getRegisterType()==null  || customer.getRegisterChannel()==null){
+			return new ServiceResult<LoginCredential>(Code.LOGIN_PARAME_ERROR, Code.LOGIN_PARAME_MSG);
+		}else{
+			if(customer.getRegisterType() == RegisterType.PHONE){
+				if(customer.getUsername()==null || StringUtil.isBlank(customer.getPassword())){
+					return new ServiceResult<LoginCredential>(Code.CUST_LOGIN_PHONE_PARAM_ERROR, Code.CUST_LOGIN_PHONE_PARAM_MSG);
+				}
+			}else if(customer.getRegisterType() == RegisterType.WEIXIN){
+				if(StringUtil.isBlank(customer.getOpenId())){
+					return new ServiceResult<LoginCredential>(Code.CUST_LOGIN_WX_PARAM_ERROR, Code.CUST_LOGIN_WX_PARAM_MSG);
+				}
+			}
+			return new ServiceResult<LoginCredential>(Code.SUCCESS);
+		}
+	}
+	
+	
+	/**
+	 * 计算完善度
+	* @param detail
+	* @return
+	* ServiceResult<Boolean>
+	 */
+	private ServiceResult<Boolean> perfectDegree(final CustomerDetail detail){
+		asyncThread.execute(new Runnable() {
+			@Override
+			public void run() {
+				customerExpandService.updateCustomerPerfectDegree(detail);
+			}
+		});
+		return new ServiceResult<Boolean>(Code.SUCCESS, "计算信息完善度成功");
+	}
+	@Override
+	public ServiceResult<Long> loadCustomerCount(Integer storeId, Long startTime, Long endTime) {
+		if(storeId!=null){
+			ServiceResult<List<Integer>> subStoreList = null;//commonService.getSubStoreIdList(storeId,1,(short)1);
+			Long count = customerDao.getCustomerCount(storeId, subStoreList.getResult(), startTime, endTime);
+			return new ServiceResult<Long>(Code.SUCCESS,"",count);
+		}else{
+			return new ServiceResult<Long>(Code.CUSTOMER_PAGE_PAREM_ERROR,Code.CUSTOMER_PAGE_PAREM_MSG, null);
+		}
+	}
+
+	@Override
+	public ServiceResult<Customer> getCustomer(Customer customer) {
+		Customer customerDB = customerDao.getCustomer(customer);
+		return new ServiceResult<Customer>(Code.SUCCESS, null, customerDB);
+	}
+
+	@Override
+	public ServiceResult<Boolean> isExistCustomer(Customer customer) {
+		if(customer!=null && (customer.getCustomerId()!=null || (customer.getParentStoreId()!=null && StringUtil.isNotBlank(customer.getOpenId())))){
+			customer = customerDao.getCustomer(customer);
+			if(customer!=null && customer.getCustomerId()!=null){
+				return new ServiceResult<Boolean>(Code.SUCCESS, null, true);
+			}else{
+				return new ServiceResult<Boolean>(Code.SUCCESS, null, false);
+			}
+		}else{
+			return new ServiceResult<Boolean>(Code.CUSTOMER_EXIST_PARAM_ERROR, Code.CUSTOMER_EXIST_PARAM_MSG, false);
+		}
+	}
+
+	public ServiceResult<Page<Customer>> getStoreAndDirectCustomerPage(Integer storeId, Page<Customer> page){
+//		ServiceResult<List<Integer>> subStoreList = commonService.getSubStoreIdList(storeId);
+//		
+//		page = customerDao.getCustomerPage(subStoreList.getResult(), page);
+//		
+//		return new ServiceResult<Page<Customer>>(Code.SUCCESS, null, page);
+		
+		StoreSearch storeSearch = new StoreSearch();
+		
+		storeSearch.setPageNo(1);
+		storeSearch.setPageSize(1000);
+		storeSearch.setStoreId(storeId);
+		
+		ServiceResult<Page> storePageResult = couponExpandService.getStoreList(storeSearch);
+		List list = storePageResult.getResult().getResult();
+		
+		List<Integer> subStoreList = new ArrayList<Integer>();
+		for (int i=0;i<list.size();i++) {
+			Map<String,Object> map = (Map) list.get(i);
+			Integer id = (Integer) map.get("id");
+			if(id!=null){
+				subStoreList.add(id);
+			}
+		}
+				
+		page = customerDao.getCustomerPage(subStoreList, page);
+		
+		return new ServiceResult<Page<Customer>>(Code.SUCCESS, null, page);
+	}
+	
+	public ServiceResult<Page<Customer>> getPageByParentStoreId(Integer parentStoreId, Page<Customer> page){
+		
+		ServiceResult<List<Integer>> subStoreList = null;//commonService.getSubStoreIdList(parentStoreId);
+		
+		page = customerDao.getPageByParentStoreId(subStoreList.getResult(), page);
+		
+		return new ServiceResult<Page<Customer>>(Code.SUCCESS, null, page);
+	}
+	
+	
+	@Override
+	public ServiceResult<Customer> getByParentStoreIdAndPhone(Integer parentStoreId,Long phone) {
+		
+		Customer customerDB = customerDao.getByParentStoreIdAndPhone(parentStoreId,phone);
+		
+		return new ServiceResult<Customer>(Code.SUCCESS, null, customerDB);
+	}
+
+	@Override
+	public ServiceResult<LoginCredential> getLoginCredential(Integer customerId) {
+		if(customerId!=null){
+			Customer customer = new Customer();
+			customer.setCustomerId(customerId);
+			customer = customerDao.getCustomer(customer);
+			if(customer!=null && customer.getCustomerId()!=null){ 
+				LoginCredential credential = new LoginCredential();
+				credential.setParentStoreId(customer.getParentStoreId());
+				credential.setStoreId(customer.getStoreId());
+				credential.setCustomerId(customerId);
+				credential.setPhone(customer.getUsername());
+				String token = uniqueGenerate.getToken();
+				return keepUserState(credential, customer,token); //keep user state
+			}
+			  return new ServiceResult<LoginCredential>(Code.CUST_USER_NOT_EXISTS, Code.CUST_USER_NOT_EXISTS_MSG, null);
+		}else{
+		   return new ServiceResult<LoginCredential>(Code.FAILED, "customerId不能为空!", null);
+		}
+	}
+
+	@Override
+	public ServiceResult<MembershipCode> getMemberShipCode(Integer customerId,Long cardId) {
+		MembershipCode code = customerDao.getMemberShipCode(customerId,cardId);
+		return new ServiceResult<MembershipCode>(Code.SUCCESS, "", code);
+	}
+
+	@Override
+	public ServiceResult<List<Customer>> getCustomerByStoreId(List<Integer> subStoreIds) {
+		return new ServiceResult<List<Customer>>(Code.SUCCESS, "", customerDao.getCustomerByStoreId(subStoreIds));
+	}
+
+	@Override
+	public ServiceResult<Boolean> bindPhone(Customer cust) {
+		boolean boo1 = customerDao.updateCustomer(cust);
+		boolean boo2 = customerDao.updateCustomerDetailPhone(cust);
+		if(boo1&&boo2){
+			return new ServiceResult<Boolean>(Code.SUCCESS,"注册成功",true);
+		}else {
+			throw new ServiceException(Code.FAILED, "审核失败");
+		}
+	}
+	
+	/**
+	 * 获取会员公众号关注状态
+	 */
+	public ServiceResult<Boolean>  getUserPublicNumberStatus(Integer customerId){
+		//参数验证
+		if(customerId==null){
+			new ServiceResult<Boolean>(Code.PARAMETER_ERROR,"参数缺失",false);
+		}
+
+		Customer customer=new Customer();
+		customer.setCustomerId(customerId);
+		//获取用户信息
+		customer=customerDao.getCustomer(customer);
+		
+		if(customer==null){
+			return new ServiceResult<Boolean>(Code.SUCCESS,null,false);
+		}else{
+			String openId=customer.getOpenId();
+			if(openId==null){
+				return new ServiceResult<Boolean>(Code.SUCCESS,null,false);
+			}
+			
+			//获取access_token 
+			ServiceResult<String> resultToken=socialSettingService.getWechatToken(customer.getStoreId());
+			if(resultToken.getCode()!=0){
+				return new ServiceResult<Boolean>(Code.SUCCESS,null,false);
+			}
+			String token=resultToken.getResult();
+			
+			//请求微信平台  会员是否关注公众号
+			ServiceResult<Boolean> statusResult= accessAuthService.getUserStatus(token, openId);
+			boolean result=false;
+			if(statusResult.getCode()==0&&statusResult.getResult()){
+				result=true;
+			}
+			
+			if(result){
+				return new ServiceResult<Boolean>(Code.SUCCESS,null,true);
+			}else{
+				return new ServiceResult<Boolean>(Code.SUCCESS,null,false);
+			}
+			
+		}
+	}
+	
+	public ServiceResult<Boolean> awardScoreAndCoupon(final Customer customer,final boolean flag) {
+		
+		asyncThread.execute(new Runnable() {
+			@Override
+			public void run() {
+				
+				ServiceResult<Integer> pointSetting =  storePointSettingService.getPoinSetting(PointSettingEnum.REGISTER, customer.getParentStoreId());
+				Integer value = 0;
+				if(pointSetting.getCode()==0){
+					value = pointSetting.getResult();
+					PointLog pointLog = new PointLog();
+					pointLog.setStoreId(customer.getStoreId());
+					pointLog.setCustomerId(customer.getCustomerId());
+					pointLog.setOperation(true);
+					pointLog.setValue(value);
+					pointLog.setOrderId(0);
+					
+					//渠道转变积分记录 渠道规则   1微商城 抽奖、签到、注册[线上]2店客源[线下]3创客源4创客链接  5数据中心
+					int channel=(int) customer.getRegisterChannel().getValue();
+					if(channel==1){
+						channel=3;  //
+					}else if(channel==2){
+						channel=1;
+					}else if(channel==3){
+						channel=2;
+					}else if(channel==4){
+						channel=5;
+					}else if(channel==5){
+						channel=4;
+					}
+					
+					pointLog.setConsumeChannel(channel);
+					
+					ServiceResult<Boolean> result = customerDetailService.updateCustPoint(pointLog, CustomerPointChannelEnum.REGISTER);
+					if(result.getCode()==0){
+						if(flag){
+							//commonService.sendCustomerRegisterSMS(customer.getStoreId(), customer.getStoreName() , customer.getUsername());
+							sendAwardCouponSMS(customer);
+						}
+					}else{
+						log.error("注册赠送积分失败~"+result.getMessage());
+					}
+				}else{
+					log.error(pointSetting.getMessage());
+				}				
+		
+			}
+		});
+				
+		return new ServiceResult<Boolean>(Code.SUCCESS, "发放积分优惠券成功！", true);
+	}
+	
+	private void sendAwardCouponSMS(Customer customer){
+		BufferedReader reader = null;
+		java.io.OutputStream stream = null;
+		InputStream inputStream= null;
+		InputStreamReader inputStreamReader =null;
+		try {
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("deviceId", "");
+			paramMap.put("latitude", "0");
+			paramMap.put("longitude", "0");
+			paramMap.put("storeId", customer.getStoreId()+"");
+			paramMap.put("salesId", "");
+			paramMap.put("userId",customer.getCustomerId()+"");	
+			
+			String contentJson = JsonUtil.toJson(paramMap);
+			 
+			URLConnection con = new java.net.URL(awardCouponUrl).openConnection();
+			con.setUseCaches(false);
+			con.setDoInput(true);
+			con.setDoOutput(true);
+			con.setRequestProperty("Content-length",contentJson.length()+"");
+			con.setRequestProperty("Content-Type","application/json");
+					
+			stream = con.getOutputStream();
+			stream.write(contentJson.getBytes("UTF-8"));
+			stream.close();
+			inputStream = con.getInputStream();
+			inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+			reader = new BufferedReader(inputStreamReader);
+			 
+			StringBuffer resultBuffer = new StringBuffer();
+			String tempLine = null;
+			 
+			while ((tempLine = reader.readLine()) != null) {
+	                resultBuffer.append(tempLine);
+	        }
+			log.info("公有云发放优惠券api的执行结果："+resultBuffer);
+			
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (reader != null) {
+					reader.close();
+	            }
+	            if (stream != null) {
+	            	stream.close();
+	            }
+	            if (inputStream != null) {
+	                inputStream.close();
+	            }
+	            if (inputStreamReader != null) {
+	                inputStreamReader.close();
+	            }
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+
+	@Override
+	public ServiceResult<List<String>> getOpenIdList(Integer storeId) {
+		List<String> result = customerDao.getOpenIdList(storeId);
+		if(result == null || result.size() == 0){
+			return new ServiceResult<List<String>>(Code.FAILED, "", null);
+		}
+		return new ServiceResult<List<String>>(Code.SUCCESS, "", result);
+	}
+	
+	public ServiceResult<HashMap<String, Integer>> getCustomerBindRef(Integer parentStoreId,List<String> paramList,ThirdSupportKey key){
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
+		if(key!=null && parentStoreId!=null && paramList!=null){
+			List<Customer> result = customerDao.getCustomerBindConn(parentStoreId, paramList, key);
+			if(key.equals(ThirdSupportKey.PHONE)){
+				for(Customer cust:result){
+					map.put(String.valueOf(cust.getUsername()), cust.getCustomerId());
+				}
+				return new ServiceResult<HashMap<String,Integer>>(Code.SUCCESS, null, map);
+			}else{
+				return new ServiceResult<HashMap<String,Integer>>(Code.FAILED, "目前仅支持第三方手机号码，扩展其他查询参数，请联系CRM团队");
+			}
+		}else{
+			return new ServiceResult<HashMap<String,Integer>>(Code.FAILED, "key,parentStoreId,paramList必须不能为空");
+		}
+	}
+
+}

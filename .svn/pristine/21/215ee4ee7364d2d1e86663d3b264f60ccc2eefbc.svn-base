@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sdzn.fuzhuxian.api.domain.dao.school.SchoolDao" >
+  <resultMap id="baseResultMap" type="com.sdzn.fuzhuxian.api.domain.model.school.School" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="logo" property="logo" jdbcType="VARCHAR" />
+    <result column="describe" property="describe" jdbcType="VARCHAR" />
+    <result column="zone_id" property="zoneId" jdbcType="INTEGER" />
+    <result column="zone_name" property="zoneName" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="is_ valid" property="isValid" jdbcType="BIT" />
+    <result column="del_flag" property="delFlag" jdbcType="BIT" />
+    <result column="del_time" property="delTime" jdbcType="TIMESTAMP" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="textbook_ version_id" property="textbookVersionId" jdbcType="INTEGER" />
+    <result column="textbook_ version_name" property="textbookVersionName" jdbcType="VARCHAR" />
+  </resultMap>
+   
+  <sql id="baseColumnList" >
+    id, name, logo, describe, zone_id, zone_name, address, create_time, "is_ valid", 
+    del_flag, del_time, code, "textbook_ version_id", "textbook_ version_name"
+  </sql>
+  
+  <select id="select" resultMap="baseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="baseColumnList" />
+    from teach_school_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from teach_school_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.sdzn.fuzhuxian.api.domain.model.school.School" >
+    insert into teach_school_info (id, name, logo, 
+      describe, zone_id, zone_name, 
+      address, create_time, "is_ valid", 
+      del_flag, del_time, code, 
+      "textbook_ version_id", "textbook_ version_name")
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{logo,jdbcType=VARCHAR}, 
+      #{describe,jdbcType=VARCHAR}, #{zoneId,jdbcType=INTEGER}, #{zoneName,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{isValid,jdbcType=BIT}, 
+      #{delFlag,jdbcType=BIT}, #{delTime,jdbcType=TIMESTAMP}, #{code,jdbcType=VARCHAR}, 
+      #{textbookVersionId,jdbcType=INTEGER}, #{textbookVersionName,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="update" parameterType="com.sdzn.fuzhuxian.api.domain.model.school.School" >
+    update teach_school_info
+    set name = #{name,jdbcType=VARCHAR},
+      logo = #{logo,jdbcType=VARCHAR},
+      describe = #{describe,jdbcType=VARCHAR},
+      zone_id = #{zoneId,jdbcType=INTEGER},
+      zone_name = #{zoneName,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      "is_ valid" = #{isValid,jdbcType=BIT},
+      del_flag = #{delFlag,jdbcType=BIT},
+      del_time = #{delTime,jdbcType=TIMESTAMP},
+      code = #{code,jdbcType=VARCHAR},
+      "textbook_ version_id" = #{textbookVersionId,jdbcType=INTEGER},
+      "textbook_ version_name" = #{textbookVersionName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

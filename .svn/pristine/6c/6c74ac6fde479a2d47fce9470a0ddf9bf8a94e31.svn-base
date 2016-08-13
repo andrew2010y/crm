@@ -1,0 +1,55 @@
+/**
+ * 文件名：MenuDao
+ * 版权：Copyright 2016-2027 SDZN. All Rights Reserved.
+ * 描述：角色信息
+ * 修改人： yanxk
+ * 修改时间：2016-07-15
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.domain.dao.role;
+
+import java.util.List;
+
+import com.sdzn.fuzhuxian.api.domain.model.role.Role;
+
+/**
+ * MenuDao
+ * <p>
+ * 角色信息
+ * 
+ * @author yanxk 2016年7月15日
+ * @see
+ * @since 1.0
+ */
+public interface RoleDao {
+	
+	List<Role> getByAccountId(Integer accountId);
+	
+   /* int countByExample(TeachUserRoleExample example);
+
+   
+    int deleteByExample(TeachUserRoleExample example);
+
+   
+    int deleteByPrimaryKey(Integer id);
+
+   
+    int insert(UserRole record);
+
+    
+    int insertSelective(UserRole record);
+
+   
+    UserRole selectByPrimaryKey(Integer id);
+
+  
+    int updateByExampleSelective(@Param("record") UserRole record, @Param("example") TeachUserRoleExample example);
+
+ 
+    int updateByExample(@Param("record") UserRole record, @Param("example") TeachUserRoleExample example);
+
+ 
+    int updateByPrimaryKeySelective(UserRole record);
+
+    int updateByPrimaryKey(UserRole record);*/
+}

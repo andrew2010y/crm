@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sdzn.fuzhuxian.api.domain.dao.lesson.LessonTargetDao" >
+  <resultMap id="BaseResultMap" type="com.sdzn.fuzhuxian.api.domain.model.lesson.LessonTarget" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="lesson_id" property="lessonId" jdbcType="INTEGER" />
+    <result column="study_target" property="studyTarget" jdbcType="VARCHAR" />
+    <result column="stage" property="stage" jdbcType="BIT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, lesson_id, study_target, stage
+  </sql>
+  
+  <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from teach_lesson_target
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from teach_lesson_target
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+   
+  <insert id="insert" parameterType="com.sdzn.fuzhuxian.api.domain.model.lesson.LessonTarget" >
+    insert into teach_lesson_target (id, lesson_id, study_target, 
+      stage)
+    values (#{id,jdbcType=INTEGER}, #{lessonId,jdbcType=INTEGER}, #{studyTarget,jdbcType=VARCHAR}, 
+      #{stage,jdbcType=BIT})
+  </insert>
+   
+  <update id="update" parameterType="com.sdzn.fuzhuxian.api.domain.model.lesson.LessonTarget" >
+    update teach_lesson_target
+    set lesson_id = #{lessonId,jdbcType=INTEGER},
+      study_target = #{studyTarget,jdbcType=VARCHAR},
+      stage = #{stage,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

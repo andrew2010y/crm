@@ -1,0 +1,33 @@
+/**
+ * 文件名：RoleToMenuDao
+ * 版权：Copyright 2016-2027 SDZN. All Rights Reserved.
+ * 描述：角色菜单关联信息
+ * 修改人： yanxk
+ * 修改时间：2016-07-15
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.domain.dao.role;
+
+import com.sdzn.fuzhuxian.api.domain.model.role.RoleToMenu;
+
+
+/**
+ * RoleToMenuDao
+ * <p>
+ * 角色菜单关联信息
+ * 
+ * @author yanxk 2016年7月15日
+ * @see
+ * @since 1.0
+ */
+public interface RoleToMenuDao {
+	 
+	int insert(RoleToMenu record);
+	 
+	RoleToMenu select(Integer id);
+	
+	int update(RoleToMenu record);
+	
+	int delete(Integer id);
+    
+}

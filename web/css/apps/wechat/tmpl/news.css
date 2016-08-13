@@ -1,0 +1,107 @@
+/* 微信消息 */
+.product-info-title{
+	padding:10px 0;
+}
+.product-info-title-head{
+	text-indent:-22px;
+	margin-left:25px;
+	margin-right:10px;
+}
+.news-path-title{
+	padding:10px 20px;
+	background-color:#f4f5f9;
+	margin:0 25px;
+}
+.news-path-title p{
+	margin:0;
+	line-height:2em;
+}
+.wechat-news-add{
+	padding-left:26px;
+	margin:20px 0;
+}
+.news-mode{
+	 margin:0 20px;
+	 padding-left:10px;
+}
+.news-mode-list{
+	display: inline-block;
+	border-top: 1px solid #ededed;
+	margin-left: -4px;
+}
+.news-mode-list span{
+	margin-left:10px;
+}
+.news-mode-list-content{
+	padding: 12px 85px;
+	margin: 20px 0;
+	border-left:1px solid #ededed;
+	position:relative;
+}
+.news-mode-list:nth-child(1) .news-mode-list-content,.news-mode-list:nth-child(4) .news-mode-list-content{
+	border-left:none;
+}
+.news-mode-list:nth-child(1),.news-mode-list:nth-child(2),.news-mode-list:nth-child(3){
+	border-top:none;
+}
+.news-mode-list:nth-child(4),.news-mode-list:nth-child(5),.news-mode-list:nth-child(6){
+	border-bottom:2px solid #d8d8d8;
+}
+.news-mode-list-pic{
+	width:250px;
+	position:absolute;
+	bottom:-150px;
+	left:140px;
+	display:none; 
+	z-index:100;
+}
+.news-notice{
+	text-align:center;
+	width:240px;
+	padding:20px 0;
+}
+.news-notice label{
+	margin-right:20px;
+}	
+.news-btn-box{
+	text-align:center;
+	margin-top:50px;
+}
+.news-setting-tip{
+    width: 420px;
+    display: inline-block;
+    margin-left: 15px;
+    vertical-align:top;
+}
+.close-set-content{
+	margin:0 20px;
+	font-size:14px;
+	line-height:2em;
+}
+/* 微信消息初始页面 end */
+/* 微信消息设置 */
+.product-body-title1{
+	 position:absolute;
+	 top: 180px;
+	 left: 25px;
+	 background-color: #fff;
+	 z-index: 200;
+	 padding: 10px;
+	 font-size: 16px;
+}
+.product-body-title2{
+	 position:absolute;
+	 top: 380px;
+	 left: 25px;
+	 background-color: #fff;
+	 z-index: 200;
+	 padding: 10px;
+	 font-size: 16px;
+}
+.wechat-news-content{
+	 margin:0 auto;
+}
+.wechat-news-content tbody{
+	 border:1px dashed #ccc;
+}
+/* 微信消息设置 end */

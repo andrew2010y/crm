@@ -1,0 +1,42 @@
+/*
+ * 文件名：MenuServiceImpl
+ * 版权：Copyright 2016-2027 SDZN. All Rights Reserved.
+ * 描述： 菜单信息服务层
+ * 修改人： yanxk
+ * 修改时间：2016-07-15
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.service.impl.menu;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sdzn.fuzhuxian.api.domain.dao.menu.MenuDao;
+import com.sdzn.fuzhuxian.api.domain.model.menu.Menu;
+import com.sdzn.fuzhuxian.api.service.menu.MenuService;
+
+/**
+ * MenuServiceImpl
+ * <p>
+ * 菜单信息服务层
+ * 
+ * @author yanxk 2016年7月15日
+ * @see
+ * @since 1.0
+ */
+@Service
+public class MenuServiceImpl implements MenuService {
+    @Autowired
+    private MenuDao menuDao;
+
+	/**
+     * 根据角色ID查询菜单信息
+     */
+	@Override
+	public List<Menu> getByRoleId(Integer roleId) {
+		return menuDao.getByRoleId(roleId);
+	}
+	
+}

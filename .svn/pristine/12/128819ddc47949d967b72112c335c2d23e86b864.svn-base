@@ -1,0 +1,41 @@
+/*
+ * 文件名： MenuService
+ * 版权：Copyright 2016-2027 SDZN. All Rights Reserved.
+ * 描述：角色信息服务层接口
+ * 修改人： yanxk
+ * 修改时间：2016-07-15
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.service.impl.role;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sdzn.fuzhuxian.api.domain.dao.role.RoleDao;
+import com.sdzn.fuzhuxian.api.domain.model.role.Role;
+import com.sdzn.fuzhuxian.api.service.role.RoleService;
+
+/**
+ * RoleServiceImpl
+ * <p>
+ * 角色信息服务层接口
+ * 
+ * @author yanxk 2016年7月15日
+ * @see
+ * @since 1.0
+ */
+@Service
+public class RoleServiceImpl implements RoleService {
+    @Autowired
+    private RoleDao roleDao;
+
+	/**
+	 * 根据账号ID获取角色列表接口
+	*/
+	@Override
+	public List<Role> getByAccountId(Integer accountId) {
+		return roleDao.getByAccountId(accountId);
+	}
+}

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdzn.fuzhuxian.api.domain.dao.user.UserAdminDao">
+  
+  <resultMap id="baseResultMap" type="com.sdzn.fuzhuxian.api.domain.model.user.UserAdmin">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="account_name" jdbcType="VARCHAR" property="accountName" />
+    <result column="create_account_id" jdbcType="INTEGER" property="createAccountId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+  </resultMap>
+  
+  <sql id="baseColumnList">
+    id, account_name, create_account_id, create_time, real_name
+  </sql>
+  
+  <insert id="insert" parameterType="com.sdzn.fuzhuxian.api.domain.model.user.UserAdmin">
+    insert into teach_user_admin (id, account_name, create_account_id, 
+      create_time, real_name)
+    values (#{id,jdbcType=INTEGER}, #{accountName,jdbcType=VARCHAR}, #{createAccountId,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{realName,jdbcType=VARCHAR})
+  </insert>
+  
+  <select id="selectById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+    select 
+    <include refid="baseColumnList" />
+    from teach_user_admin
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+   
+  <update id="update" parameterType="com.sdzn.fuzhuxian.api.domain.model.user.UserAdmin">
+    update teach_user_admin
+    set account_name = #{accountName,jdbcType=VARCHAR},
+      create_account_id = #{createAccountId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      real_name = #{realName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from teach_user_admin
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+   
+  <select id="selectByExample" parameterType="com.sdzn.fuzhuxian.api.domain.model.user.UserAdmin" resultMap="baseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="baseColumnList" />
+    from teach_user_admin
+    <!--<if test="_parameter != null">-->
+      <!--<include refid="Example_Where_Clause" />-->
+    <!--</if>-->
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+
+</mapper>

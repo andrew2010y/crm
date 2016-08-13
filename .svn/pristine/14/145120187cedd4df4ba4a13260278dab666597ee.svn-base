@@ -1,0 +1,19 @@
+package com.sdzn.fuzhuxian.api.domain.dao.student;
+
+import java.util.List;
+
+import com.sdzn.fuzhuxian.api.domain.model.student.SchoolStudentGo;
+
+public interface SchoolStudentGoDAO {
+	
+	List<SchoolStudentGo> selectAll();
+
+	SchoolStudentGo selectById(Integer id);
+
+	int insert(SchoolStudentGo schoolStudInfo);
+
+	int updateById(SchoolStudentGo schoolStudInfo);
+
+	int deleteById(Integer id);
+
+}

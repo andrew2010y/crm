@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sdzn.fuzhuxian.api.domain.dao.teach.LessonDAO">
+	<resultMap type="com.sdzn.fuzhuxian.api.domain.model.teach.Lesson"
+		id="base_result_map">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="teacher_id" jdbcType="INTEGER" property="teacherId" />
+		<result column="teacher_name" jdbcType="VARCHAR" property="teacherName" />
+		<result column="chapter_id" jdbcType="INTEGER" property="chapterId" />
+		<result column="chapter_name" jdbcType="VARCHAR" property="chapterName" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="is_read" jdbcType="BIT" property="isRead" />
+		<result column="read_time" jdbcType="TIMESTAMP" property="readTime" />
+	</resultMap>
+	<sql id="base_column_list">
+		id,
+		teacher_id,teacher_name,chapter_id,chapter_name,create_time,is_read,read_time
+	</sql>
+
+    <sql id="where">
+        <trim prefix="where" prefixOverrides="and |or">
+            <if test="teacherId != null">
+                and teacher_id=#{teacherId}
+            </if>
+            <if test="chapterId != null">
+                and chapter_id=#{chapterId}
+            </if>
+            <if test="isRead != null">
+                and is_read=#{isRead}
+            </if>
+        </trim>
+    </sql>
+
+    <sql id="limit">
+        <trim prefix="limit">
+            <if test="start!=null and size!=null">
+                #{start}, #{size}
+            </if>
+        </trim>
+    </sql>
+
+    <sql id="order_by">
+        order by id desc
+    </sql>
+    <select id="list" resultMap="base_result_map" parameterType="java.util.HashMap">
+        SELECT
+        <include refid="base_column_list"/>
+        FROM teach_lesson
+        <include refid="where"/>
+        <include refid="order_by"/>
+        <include refid="limit"></include>
+    </select>
+
+    <select id="listById" resultMap="base_result_map" parameterType="java.lang.Integer">
+        select
+        <include refid="base_column_list"/>
+        from teach_lesson
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <insert id="insert" parameterType="com.sdzn.fuzhuxian.api.domain.model.teach.Lesson"
+            useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO teach_lesson
+		(id,teacher_id,teacher_name,chapter_id,chapter_name,create_time,is_read,read_time)
+		values(#{id,jdbcType=INTEGER},
+		#{teacherId,jdbcType=INTEGER},
+		#{teacherName,jdbcType=VARCHAR},
+		#{chapterId,jdbcType=INTEGER},
+		#{chapterName,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{isRead,jdbcType=BIT},
+		#{readTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	<update id="updateById" parameterType="com.sdzn.fuzhuxian.api.domain.model.teach.Lesson">
+		UPDATE teach_lesson
+		<set>
+			<if test="teacherId != null">
+				teacher_id = #{teacherId,jdbcType=INTEGER},
+			</if>
+			<if test="teacherName != null">
+				teacher_name = #{teacherName,jdbcType=VARCHAR},
+			</if>
+			<if test="chapterId != null">
+				chapter_id = #{chapterId,jdbcType=INTEGER},
+			</if>
+			<if test="chapterName != null">
+				chapter_name = #{chapterName,jdbcType=VARCHAR},
+
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isRead != null">
+				is_read = #{isRead,jdbcType=BIT},
+			</if>
+			<if test="readTime != null">
+				read_time = #{readTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+	<delete id="deleteById" parameterType="java.lang.Integer">
+		DELETE FROM teach_lesson where id = #{id,jdbcType=INTEGER}
+	</delete>
+</mapper>

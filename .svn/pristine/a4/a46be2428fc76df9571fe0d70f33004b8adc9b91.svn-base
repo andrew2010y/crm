@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sdzn.fuzhuxian.api.domain.dao.teach.LessonResourceDAO">
+	<resultMap type="com.sdzn.fuzhuxian.api.domain.model.teach.LessonResource"
+		id="base_result_map">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="suffix" jdbcType="VARCHAR" property="suffix" />
+		<result column="lesson_id" jdbcType="INTEGER" property="lessonId" />
+		<result column="type" jdbcType="BIT" property="type" />
+		<result column="url" jdbcType="VARCHAR" property="url" />
+		<result column="download_time" jdbcType="TIMESTAMP" property="downloadTime" />
+		<result column="is_download" jdbcType="BIT" property="isDownload" />
+		<result column="stage" jdbcType="BIT" property="stage" />
+	</resultMap>
+	<sql id="base_column_list">
+		id,name,suffix,lesson_id,type,url,download_time,is_download,stage
+	</sql>
+	<select id="selectAll" resultMap="base_result_map">
+		SELECT * FROM
+		teach_lesson_resource
+	</select>
+	<insert id="insert"
+		parameterType="com.sdzn.fuzhuxian.api.domain.model.teach.LessonResource"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO teach_lesson_resource
+		(name,suffix,lesson_id,type,url,download_time,is_download,stage)
+		values(
+		#{name,jdbcType=VARCHAR},
+		#{suffix,jdbcType=VARCHAR},
+		#{lessonId,jdbcType=INTEGER},
+		#{type,jdbcType=BIT},
+		#{url,jdbcType=VARCHAR},
+		#{downloadTime,jdbcType=TIMESTAMP},
+		#{isDownload,jdbcType=BIT},
+		#{stage,jdbcType=BIT}
+		)
+	</insert>
+	<update id="updateById"
+		parameterType="com.sdzn.fuzhuxian.api.domain.model.teach.LessonResource">
+		UPDATE teach_lesson_resource
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="suffix != null">
+				suffix = #{suffix,jdbcType=VARCHAR},
+			</if>
+			<if test="lessonId != null">
+				lesson_id = #{lessonId,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=BIT},
+			</if>
+			<if test="url != null">
+				url = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="downloadTime != null">
+				download_time = #{downloadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isDownload != null">
+				is_download = #{isDownload,jdbcType=BIT},
+			</if>
+			<if test="stage != null">
+				stage = #{stage,jdbcType=BIT},
+			</if>
+		</set>
+		WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+	<delete id="deleteById" parameterType="java.lang.Integer">
+		DELETE FROM teach_lesson_resource where id = #{id,jdbcType=INTEGER}
+	</delete>
+</mapper>

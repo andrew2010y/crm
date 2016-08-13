@@ -1,0 +1,439 @@
+.app-inner {
+  margin: 20px 0 0 30px;
+  padding-bottom: 0;
+  padding-top: 0;
+  background-color: #fff;
+}
+.app__content {
+  width: 1000px;
+  min-height: 420px;
+  zoom: 1;
+}
+.app-design{
+	position:relative;
+	float: left;
+}
+.app-design .app-preview {
+  position: relative;
+  float: left;
+  width: 350px;
+  border: 1px solid #e5e5e5;
+  border-bottom-width: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 18px 18px 0 0;
+}
+.app-design.without-add-region .app-preview {
+  border-bottom-width: 1px;
+  padding-bottom: 100px;
+  border-radius: 18px;
+}
+.app-design .app-preview .app-field {
+  position: relative;
+  cursor: pointer;
+  background-color: transparent;
+  -webkit-user-select: none;
+}
+
+.app-design .app-preview .app-header {
+	height: 70px;
+	background: url("../../img/iphone_head.png") no-repeat center center;
+}
+.app-design .app-preview .app-entry {
+	position: relative;
+	width: 320px;
+	min-height: 400px;
+	margin: 0 auto;
+	padding-bottom: 11px;
+	border: 1px solid #c5c5c5;
+	background: #f9f9f9;
+}
+.app-design .app-preview .app-entry.no-border-bottom{
+	border-bottom: none;	
+}
+.app-design.without-add-region .app-preview:after {
+  position: absolute;
+  content: '';
+  bottom: 20px;
+  left: 145px;
+  width: 60px;
+  height: 60px;
+  border: 1px solid #ddd;
+  border-radius: 30px;
+}
+.app-design .app-preview .app-config .app-field {
+	cursor: default;
+	background-color: transparent;
+}
+.app-design .app-preview .app-config .app-field:hover {
+	background-color: transparent;
+}
+.app-design .app-preview .app-field {
+	position: relative;
+	cursor: move;
+	-webkit-user-select: none;
+}
+.app-design .app-preview .app-field.member-card-field {
+	cursor: default;
+}
+.app-design .app-preview .app-field:hover {
+	background-color: #f2f2f2;
+}
+.app-design .app-preview .app-config .app-field h1 {
+	padding: 18px 60px 0 60px;
+	margin: 0;
+	height: 46px;
+	line-height: 46px;
+	font-size: 16px;
+	color: #fff;
+	font-weight: bold;
+	text-align: center;
+	background: url("../../img/titlebar.png") no-repeat;
+	box-sizing: content-box;
+}
+.app-design .app-preview .app-config .app-field h1 span {
+	display: inline-block;
+	height: 46px;
+	width: 200px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+.app-design .app-preview .app-config .app-field.editing {
+	background-color: transparent;
+}
+.app-design .app-preview .app-fields .app-field{
+	width: 88%;
+	border: 1px solid #d8d8d8;
+	margin-left: 20px;
+	background-color: #fff;
+	border-radius: 8px;
+	padding: 10px;
+    cursor: default;
+}
+.app-design .app-preview .app-fields .app-field.member-card-field{
+	margin-top: 20px;
+}
+.app-design .app-preview .app-fields .app-field.coupon-field{
+	margin-top: 40px;
+    padding-bottom: 0;
+}
+.app-design .app-fields{
+	position:relative;
+}
+.app-design .app-fields .app_arrow,
+.app-design .app-fields .app_arrow:after{
+	width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 8px 10px 8px 0;
+  border-color: transparent #d8d8d8 transparent transparent;
+  position: absolute;
+  left: 10px;
+  top: 35px;
+	z-index: 19;
+}
+.app-design .app-fields .app_arrow:after {
+  content: "";
+  border-right-color: #fff;
+  left: 1px;
+  top: -8px;
+}
+.app-design .app-fields .app-field-row{
+	width: 100%;
+	margin: 20px 0;
+	background: #fff;
+	padding: 10px;
+}
+.app-design .app-fields.member_card_main .app-field-row{
+	margin: 1px 0;
+}
+.app-design .app-fields .coupon-field .app-field-row{
+	width: 100%;
+	margin: 20px 0 0 0;
+	background: #fff;
+	padding: 10px;
+	border-bottom: 1px solid #EEECEC;
+}
+.app-design .app-fields .coupon-field .app-field-row.dotted-top{
+	border-top: 1px solid #ccc;
+  	border-top-style: dotted;
+}
+.app-design .app-fields .coupon-field .app-field-row.no-border{
+	margin: 0;
+	border-bottom: none;
+}
+.app-design .app-fields .app-field-row.user-set-coupon{
+	width: 88%;
+	margin: 20px auto;
+	border: 1px solid #d8d8d8;
+	border-radius: 8px;
+}
+.app-design .app-fields .app-field-row span{
+	display:inline-block;
+}
+.app-design .app-fields .app-field-row span.mallUrlNameText{
+	color: #999999;
+	font-size: 13px;
+}
+.app-field-row .row-arrow-right{
+	width: 12px;
+	height: 19px;
+	background: url(../../img/right_arror_grey.png) no-repeat;
+	background-size: 100% 100%;
+}
+.app-design .app-sidebar {
+  position: relative;
+  float: left;
+  min-width: 620px;
+  margin-left: 20px;
+  padding-bottom: 20px;
+  font-size: 14px;
+}
+.app-design .app-sidebar.arrow-b{
+	padding-bottom: 0;
+	margin-top: 120px;
+}
+.app-design .app-sidebar.arrow-b .app-sidebar-inner{
+	min-height: 350px;
+}
+.app-design .app-sidebar .arrow,
+.app-design .app-sidebar .arrow:after {
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 8px 10px 8px 0;
+  border-color: transparent #d8d8d8 transparent transparent;
+  position: absolute;
+  left: -10px;
+  top: 19px;
+}
+.app-design .app-sidebar .arrow:after {
+  content: "";
+  border-right-color: #F4F6FC;
+  left: 1px;
+  top: -8px;
+}
+.app-design .app-sidebar.arrow-b .arrow,
+.app-design .app-sidebar.arrow-b .arrow:after {
+	top: 317px;
+}
+.app-design .app-sidebar.arrow-b .arrow:after {
+  top: -8px;
+}
+.app-design .app-sidebar .app-sidebar-inner {
+  padding: 12px 10px;
+  min-height: 28px;
+  background: #f8f8f8;
+  border-radius: 5px;
+  border: 1px solid #d1d1d1;
+}
+.app-design .form-horizontal {
+	width: 575px;
+	margin-bottom: 30px;
+	width: auto;
+}
+.app-design .app-sidebar .app-sidebar-inner .form-horizontal {
+  margin-bottom: 0;
+}
+.app-design .form-horizontal .control-group {
+  margin-bottom: 10px;
+}
+.app-design .form-horizontal .control-label {
+  float: left;
+  width: 100px;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 18px;
+  padding-top: 7px;
+  text-align: right;
+  cursor: default;
+  margin: 0;
+}
+.form-horizontal em.required {
+  font-size: 16px;
+  color: #f00;
+  vertical-align: middle;
+}
+.app-design .app-sidebar .required {
+  margin-right: 2px;
+  vertical-align: middle;
+}
+.app-design .app-sidebar .controls {
+  margin-left: 100px;
+  word-break: break-all;
+  line-height: 30px;
+}
+.app-design .app-sidebar .config-title{
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 30px;
+  margin-top: 0;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.app-design .bottom-field{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 35px;
+}
+.app-design .bottom-field ul{
+  list-style: none;
+  display: table;
+  padding: 0;
+  margin: 0;
+}
+.app-design .bottom-filed ul li{
+	display: table-cell;
+	text-align: center;
+	max-width: 91px;
+	padding: 8px 0;
+	cursor:pointer;
+	-webkit-user-select: none;
+}
+
+.bottom-field ul.first-menu-ul{
+	background: #fafafa;
+	width: 100%;
+}
+.bottom-field ul.first-menu-ul li{
+	position: relative;
+	border: none;
+	height: 35px;
+	width: 91px;
+	display: table-cell;
+	text-align:center;
+	line-height: 35px;
+	border: 1px solid transparent;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	cursor: pointer;
+}
+.bottom-field ul.first-menu-ul li.key-li{
+	border-right: 1px solid #ccc;
+}
+.bottom-field ul.first-menu-ul li.key-li{
+	width: 35px;
+	background: url(../../img/ky-img.png) no-repeat;
+	background-size: 100% 100%;
+}
+.bottom-field ul.first-menu-ul li.p-menu .p-icon{
+	display: inline-block;
+	width: 7px;
+	height: 7px;
+	background: url(../../img/index_fl.png) no-repeat;
+	background-size: 100% 100%;
+	margin-right: 3px;
+}
+.bottom-field ul li.b-menu-item:hover{
+	border: 1px solid #77c2f7;
+	color: #77c2f7;
+}
+.bottom-field ul li.b-menu-item:hover li..b-menu-item,
+.bottom-field ul li.b-menu-item{
+	border: 1px solid transparent;
+	color: #666666;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+.bottom-field ul li.b-menu-item.selected{
+	border: 1px solid #77c2f7;
+	color: #77c2f7;
+}
+
+.app-design .bottom-field ul.sub-menu-ul li{
+	display:table-row;
+	float: left;
+	width: 100%;
+	width: 91px;
+}
+.app-design .bottom-field ul.sub-menu-ul li .menu-text{
+	width: 100%;
+	display: inline-block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 0 2px;
+	line-height: 33px;
+	white-space: nowrap;
+}
+.app-design .bottom-field ul.sub-menu-ul li.add-menu{
+}
+.app-sidebar .right-item{
+	display:none;
+}
+.app-sidebar .right-item .parent-item{
+	display:none;
+}
+.app-sidebar .right-item .child-item{
+	display:none;
+}
+.control-tips,.item-tips{
+	font-size: 13px;
+	color: #aaa;
+}
+.item-tips{
+	display:none;
+}
+.control-tips{
+	margin: 6px 0;
+	padding-left: 100px;
+}
+.parent-item input.form-control,
+.child-item input.form-control{
+	width: 300px;
+}
+.bottom-field ul li.add-menu{
+	width: 91px;
+	height: 30px;
+	background: url(../../img/add-icon.png) no-repeat;
+	background-size: 30% 65%;
+	background-position: center center;
+}
+.sub-menu-div{
+	display:none;
+	width: 91px;
+	position:absolute;
+	left: 0;
+	bottom:45px;
+	border: 1px solid #ccc;
+	border-top: 0;
+	border-bottom: 0;
+}
+.sub-menu-div .arrow,
+.sub-menu-div .arrow:after{
+	width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 8px 8px 0px 10px;
+  border-color: #d8d8d8 transparent transparent transparent;
+  position: absolute;
+  left: 36px;
+  bottom: -8px;
+}
+.sub-menu-div .arrow:after {
+  content: "";
+  border-top-color: #F4F6FC;
+  left: -8px;
+  bottom: 0;
+  border-width: 7px 7px 1px 8px;
+}
+.app-sidebar .sidebar-header{
+	position: relative;
+}
+.app-sidebar .sidebar-header .delete-m-btn{
+	display:none;
+	position: absolute;
+	font-size: 13px;
+	padding: 2px 10px;
+	right: 10px;
+	top: 0;
+	border: none;
+}
+.bottom-field ul li.b-menu-item.sortable {
+	cursor: move;
+}

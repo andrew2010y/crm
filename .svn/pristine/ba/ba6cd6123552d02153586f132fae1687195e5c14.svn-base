@@ -1,0 +1,99 @@
+package com.sdzn.fuzhuxian.api.domain.model.menu;
+
+import java.io.Serializable;
+import java.util.Date;
+
+public class Menu implements Serializable {
+ 
+	private static final long serialVersionUID = -7697180731783326791L;
+
+	private Integer id;
+
+    private String name;
+
+    private Integer createAccountId;
+
+    private Date createTime;
+
+    private String url;
+
+    private Integer parentId;
+
+    private Boolean hasChild;
+
+    private Boolean available;
+
+    private String path;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getCreateAccountId() {
+        return createAccountId;
+    }
+
+    public void setCreateAccountId(Integer createAccountId) {
+        this.createAccountId = createAccountId;
+    }
+
+    public Date getCreateTime() {
+        return createTime ;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
+    }
+
+    public Boolean getHasChild() {
+        return hasChild;
+    }
+
+    public void setHasChild(Boolean hasChild) {
+        this.hasChild = hasChild;
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+}

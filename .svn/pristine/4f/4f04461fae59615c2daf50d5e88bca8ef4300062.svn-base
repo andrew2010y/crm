@@ -1,0 +1,19 @@
+package com.sdzn.fuzhuxian.api.domain.dao.teacher;
+
+import java.util.List;
+
+import com.sdzn.fuzhuxian.api.domain.model.teacher.SchoolTeacherTeach;
+
+public interface TeacherTeachDAO {
+
+    List<SchoolTeacherTeach> selectAll();
+
+    SchoolTeacherTeach selectById();
+
+    int insert(SchoolTeacherTeach schoolTeacherTeach);
+
+    int updateById(SchoolTeacherTeach schoolTeacherTeach);
+
+    int deleteById(Integer id);
+
+}

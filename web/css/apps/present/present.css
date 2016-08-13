@@ -1,0 +1,147 @@
+/* 礼遇列表 */
+.center{
+	text-align:center;
+}
+.table-panel .table>tbody>tr>td:first-child:nth-child(1){
+    text-align:center;
+}
+.modal-body .table-panel .table>thead>tr>th:nth-child(1){
+	text-align:center;
+}
+.modal-body .table-panel .table>thead>tr>th:last-child, .table-panel .table>tbody>tr>td:last-child {
+    text-align:center;
+}
+.modal-body .table-panel {
+    border-top: none;
+    padding: 0;
+}
+.add-present{
+	margin:20px 0 15px 20px;
+}
+.present-content-setting{
+	line-height:32px;
+}
+.present-icon{
+	width:24px;
+	height:24px;
+	border-radius:12px;
+	background-color:#0096FF;
+	display:inline-block;
+	line-height:24px;
+	color:#fff;
+	font-style:normal;
+	font-size:14px;
+	text-align:center;
+	margin-right:5px;
+}
+.label-content{
+	margin-right:30px;
+}
+.arrow-icon{
+	font-size:18px;
+	color:#0096ff;
+	cursor:pointer;
+}
+.table-panel .table a{
+	color:#0096ff;
+}
+.tips-icon img{
+	margin-left:8px;
+	vertical-align:top;
+	cursor:pointer;
+}
+.mr25{
+	margin-right:25px;
+}
+.mr20{
+	margin-right:20px;
+}
+/* 礼遇列表end */
+/* 编辑礼遇 */
+.present-edit-content{
+	padding:35px 70px;
+}
+.present-edit-content .search-label{
+	text-align:left;
+}
+.add-coupon .table-panel{
+	padding:0;
+}
+.add-coupon table{
+	border:1px solid #d8d8d8;
+	margin-bottom:30px;
+}
+
+.add-coupon .table-panel .table>thead>tr>th,.add-coupon .table-panel .table>tbody>tr>td{
+	text-align:center;
+}
+.present-scope-tips{
+	margin-left:30px;
+}
+.present-scope .num{
+	color:#119dff;
+	margin-left:5px;
+}
+.all-tags{
+	display:none;
+}
+.more-tags:hover{
+	background-color:#44ACF5;
+	cursor:pointer;
+}
+.more-tags-content{
+	padding:0 10px;
+}
+.tags-box{
+	border:1px solid #e4e5ea;
+	background-color:#f4f6fc;
+	border-radius:10px;
+	padding:15px 35px;
+	margin-top:20px; 
+	margin-bottom:40px;
+	user-select:none;
+	-webkit-user-select:none;
+	-ms-user-select:none;
+	-moz-user-select: none;
+}
+.checked-label-span{
+	width:64px;
+    display: inline-block;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: #0096FF;
+    text-align: center;
+    color: #fff;
+    padding: 2px 5px;
+    margin:8px 12px;
+    cursor:pointer;
+}
+.unchecked-label-span{
+	width:64px;
+	display: inline-block;
+    border: 1px solid #0096ff;
+    border-radius: 12px;
+    text-align: center;
+    color: #0096ff;
+    padding: 2px 5px;
+    margin:8px 12px;
+    cursor:pointer;
+}
+.sign-present-title{
+	width:180px;
+	display:inline-block;
+	vertical-align:middle;
+}
+.counting{
+	display:none;
+	color:#0096ff;
+}
+.uecontent-box{
+	margin-top:20px;
+	margin-bottom:40px;"
+}
+.btn-cancel{
+	margin-right:55px;
+	width:84px;
+}
+/* 编辑礼遇end */

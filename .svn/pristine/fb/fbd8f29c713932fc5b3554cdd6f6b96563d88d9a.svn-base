@@ -1,0 +1,33 @@
+/**
+ * 文件名：SchoolStudentDao
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述：
+ * 修改人： wangning
+ * 修改时间：16/7/14
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.domain.dao.user;
+
+import java.util.List;
+
+import com.sdzn.fuzhuxian.api.domain.model.user.SchoolStudent;
+
+/**
+ * SchoolStudentDao〈一句话功能简述〉 〈功能详细描述〉
+ * 
+ * @author 王宁
+ * @version v1.0.0
+ * @see ［相关类/方法］
+ * @since 产品/模块版本
+ */
+public interface SchoolStudentDao {
+
+	List<SchoolStudent> selectAll();
+
+	int insert(SchoolStudent schoolStudent);
+
+	int updateById(SchoolStudent schoolStudent);
+
+	int deleteById(Integer id);
+
+}

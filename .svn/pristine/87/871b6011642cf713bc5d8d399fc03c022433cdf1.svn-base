@@ -1,0 +1,156 @@
+package com.sdzn.fuzhuxian.api.domain.model.student;
+
+import java.util.Date;
+
+public class SchoolStudentGo {
+	private Integer id;
+
+	private Integer studentId;
+
+	private Integer stageId;
+
+	private String stageName;
+
+	private Integer classId;
+
+	private String className;
+
+	private Integer gradeId;
+
+	private String gradeName;
+
+	private Integer versionId;
+
+	private String versionName;
+
+	private Integer bookId;
+
+	private String bookName;
+
+	private String duty;
+
+	private Date createTime;
+
+	private Integer createAccountId;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Integer getStudentId() {
+		return studentId;
+	}
+
+	public void setStudentId(Integer studentId) {
+		this.studentId = studentId;
+	}
+
+	public Integer getStageId() {
+		return stageId;
+	}
+
+	public void setStageId(Integer stageId) {
+		this.stageId = stageId;
+	}
+
+	public String getStageName() {
+		return stageName;
+	}
+
+	public void setStageName(String stageName) {
+		this.stageName = stageName;
+	}
+
+	public Integer getClassId() {
+		return classId;
+	}
+
+	public void setClassId(Integer classId) {
+		this.classId = classId;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public Integer getGradeId() {
+		return gradeId;
+	}
+
+	public void setGradeId(Integer gradeId) {
+		this.gradeId = gradeId;
+	}
+
+	public String getGradeName() {
+		return gradeName;
+	}
+
+	public void setGradeName(String gradeName) {
+		this.gradeName = gradeName;
+	}
+
+	public Integer getVersionId() {
+		return versionId;
+	}
+
+	public void setVersionId(Integer versionId) {
+		this.versionId = versionId;
+	}
+
+	public String getVersionName() {
+		return versionName;
+	}
+
+	public void setVersionName(String versionName) {
+		this.versionName = versionName;
+	}
+
+	public Integer getBookId() {
+		return bookId;
+	}
+
+	public void setBookId(Integer bookId) {
+		this.bookId = bookId;
+	}
+
+	public String getBookName() {
+		return bookName;
+	}
+
+	public void setBookName(String bookName) {
+		this.bookName = bookName;
+	}
+
+	public String getDuty() {
+		return duty;
+	}
+
+	public void setDuty(String duty) {
+		this.duty = duty;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public Integer getCreateAccountId() {
+		return createAccountId;
+	}
+
+	public void setCreateAccountId(Integer createAccountId) {
+		this.createAccountId = createAccountId;
+	}
+
+}

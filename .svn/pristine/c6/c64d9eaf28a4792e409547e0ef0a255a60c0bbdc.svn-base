@@ -1,0 +1,54 @@
+/*
+ * 文件名：LessonService.java
+ * 版权：时代智囊
+ * 描述：〈描述〉
+ * 修改人：武海之
+ * 修改时间：2016年7月18日
+ * 修改内容：新增
+ * 修改人：〈武海之〉
+ * 修改时间：YYYY-MM-DD
+ * 修改单号：〈修改单号〉
+ * 修改内容：〈修改内容〉
+ */
+package com.sdzn.fuzhuxian.api.service.impl.teach;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sdzn.fuzhuxian.api.domain.dao.teach.LessonDAO;
+import com.sdzn.fuzhuxian.api.domain.model.teach.Lesson;
+import com.sdzn.fuzhuxian.api.service.teach.LessonService;
+
+@Service
+public class LessonServiceImpl implements LessonService {
+    @Autowired
+    private LessonDAO lessonDAO;
+
+    @Override
+    public List<Lesson> seleteAll() {
+        return lessonDAO.seleteAll();
+    }
+
+    @Override
+    public Lesson selectById(Integer id) {
+        return lessonDAO.seleteById();
+    }
+
+    @Override
+    public int insert(Lesson lesson) {
+        return lessonDAO.insert(lesson);
+    }
+
+    @Override
+    public int updateById(Lesson lesson) {
+        return lessonDAO.updateById(lesson);
+    }
+
+    @Override
+    public int deleteById(Integer id) {
+        return lessonDAO.deleteById(id);
+    }
+
+}

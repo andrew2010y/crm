@@ -1,0 +1,36 @@
+/*
+ * 文件名：NetWorkController
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述：  网段信息服务层接口
+ * 修改人： 武海之
+ * 修改时间：2016-07-14
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.service.netWork;
+
+import java.util.HashMap;
+import java.util.List;
+
+import com.sdzn.fuzhuxian.api.domain.model.network.NetWork;
+
+/**
+ * 
+ * NetWorkService 网段信息服务层接口
+ * 
+ * @author 武海之 2016年7月14日
+ * @see
+ * @since 1.0
+ */
+public interface NetWorkService {
+
+    List<NetWork> selectByImei(String imei);
+
+    int insert(NetWork netWork);
+
+    int update(NetWork netWork);
+
+    int delete(Integer id);
+
+    List<NetWork> list(HashMap<String, Object> params);
+
+}

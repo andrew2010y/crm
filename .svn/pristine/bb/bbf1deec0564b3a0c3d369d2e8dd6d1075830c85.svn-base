@@ -1,0 +1,123 @@
+/**
+ * 文件名：AccountContainerForServletContext
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述：
+ * 修改人： yizhou
+ * 修改时间：16/7/14
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.controller.user;
+
+import com.sdzn.fuzhuxian.api.domain.model.user.Account;
+import org.apache.commons.lang.StringUtils;
+
+import javax.servlet.ServletContext;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * AccountContainerForServletContext 用户内存管理
+ * 〈功能详细描述〉
+ * @author yizhou
+ * @version v1.0.0
+ * @see ［相关类/方法］
+ * @since 产品/模块版本
+ */
+public class AccountContainerForServletContext extends AccountTimeTaskThreadPoolListener {
+
+    private static final int ACCOUNT_EXPIRE = 2; // 登录有效时间
+    private static final TimeUnit UNIT_OF_TIME = TimeUnit.HOURS; //登录时间单位
+
+    private Map<String, Account> accountMap;//用户缓存数据
+    private Map<String, ScheduledFuture<?>> taskMap;
+
+    private ServletContext context = null;
+
+    public AccountContainerForServletContext(ServletContext context) {
+
+        this.context = context;
+        if (context.getAttribute("userMap") == null) {
+            this.accountMap = new ConcurrentHashMap<>();
+        } else {
+            this.accountMap = (Map<String, Account>) context.getAttribute("accountMap");
+        }
+
+        if (context.getAttribute("taskMap") == null) {
+            this.taskMap = new ConcurrentHashMap<>();
+        } else {
+            this.taskMap = (Map<String, ScheduledFuture<?>>) context.getAttribute("taskMap");
+        }
+
+    }
+
+    /**
+     * 获取用户
+     * @param accessToken
+     * @return
+     */
+    public Account getAccount(String accessToken) {
+
+        if (StringUtils.isBlank(accessToken))
+            return null;
+
+        Account Account = accountMap.get(accessToken);
+
+        return Account;
+    }
+
+    /**
+     * 将用户设置到内存
+     * @param accessToken
+     * @param account
+     * @return
+     */
+    public boolean setAccount(final String accessToken, Account account) {
+
+        try {
+
+            accountMap.put(accessToken, account);
+
+            Thread thread = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    accountMap.remove(accessToken);
+                }
+            });
+            thread.setDaemon(true);
+
+            ScheduledFuture<?> sc = service.schedule(thread, ACCOUNT_EXPIRE, UNIT_OF_TIME);
+            taskMap.put(accessToken, sc);
+
+
+            context.setAttribute("accountMap", accountMap);
+            context.setAttribute("taskMap", taskMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    /**
+     * 删除内存用户
+     * @param id
+     */
+    public void delAccount(int id) {
+
+        for (Map.Entry<String, Account> entry : accountMap.entrySet()) {
+
+            if (entry.getValue().getId() == id) {
+                accountMap.remove(entry.getKey());
+                ScheduledFuture<?> sc = taskMap.get(entry.getKey());
+                sc.cancel(true);
+                taskMap.remove(entry.getKey());
+                context.setAttribute("accountMap", accountMap);
+                context.setAttribute("taskMap", taskMap);
+            }
+        }
+    }
+
+}

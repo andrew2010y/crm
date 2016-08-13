@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdzn.fuzhuxian.api.domain.dao.user.SchoolAdminDao">
+	<resultMap id="base_result_map"
+		type="com.sdzn.fuzhuxian.api.domain.model.user.SchoolAdmin">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="account_name" jdbcType="VARCHAR" property="accountName" />
+		<result column="create_account_id" jdbcType="INTEGER" property="createAccountId" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="school_id" jdbcType="INTEGER" property="schoolId" />
+		<result column="school_name" jdbcType="VARCHAR" property="schoolName" />
+		<result column="real_name" jdbcType="VARCHAR" property="realName" />
+	</resultMap>
+	
+	<sql id="base_colum_list">
+		id, account_name, create_account_id, create_time, school_id, school_name,real_name
+	</sql>
+	
+	<select id="selectAll" resultMap="base_result_map">
+		SELECT * FROM
+		teach_user_school_admin
+	</select>	
+	
+	<insert id="insert" parameterType="com.sdzn.fuzhuxian.api.domain.model.user.SchoolAdmin">
+		insert into teach_user_school_admin
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="accountName != null">
+				account_name,
+			</if>
+			<if test="createAccountId != null">
+				create_account_id,
+			</if>
+			<if test="createTime!= null">
+				create_time,
+			</if>
+			<if test="schoolId != null">
+				school_id,
+			</if>
+			<if test="schoolName != null">
+				school_name
+			</if>
+			<if test="realName != null">
+				real_name
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="id != null">
+			#{id,jdbcType=INTEGER}
+			</if>
+			<if test="accountName != null">
+		     #{accountName,jdbcType=VARCHAR},
+			</if>
+			<if test="createAccountId != null">
+			#{createAccountId,jdbcType=INTEGER},
+				
+			</if>
+			<if test="createTime!= null">
+			#{createTime,jdbcType=TIMESTAMP},
+				
+			</if>
+			<if test="schoolId != null">
+			#{schoolId,jdbcType=INTEGER}
+			</if>
+			<if test="schoolName != null">
+		    #{schoolName,jdbcType=VARCHAR},
+			</if>
+			<if test="realName != null">
+			#{realName,jdbcType=VARCHAR},
+			</if>		
+		</trim>
+	</insert>
+	
+	<update id="updateById" parameterType="com.sdzn.fuzhuxian.api.domain.model.user.SchoolAdmin">
+		update teach_user_school_admin
+		<set>
+			<if test="accountName != null">
+				account_name= #{accountName,jdbcType=VARCHAR},
+			</if>
+			<if test="createAccountId != null">
+				create_account_id = #{createAccountId,jdbcType=INTEGER},
+			</if>
+			<if test="create_time != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="schoolId != null">
+				school_id = #{schoolId,jdbcType=INTEGER},
+			</if>
+			<if test="schoolName!= null">
+				school_name = #{schoolName,jdbcType=VARCHAR},
+			</if>
+			<if test="realName!= null">
+				real_name = #{schoolName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+     <delete id="deleteById" parameterType="java.lang.Integer">
+		delete from teach_user_school_admin
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+</mapper>

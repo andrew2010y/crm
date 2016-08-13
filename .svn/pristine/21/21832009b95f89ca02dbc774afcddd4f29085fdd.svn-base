@@ -1,0 +1,167 @@
+/**
+ * 文件名：SchoolStudentGoController
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述：
+ * 修改人：武海之
+ * 修改时间：16/7/16
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.controller.schoolStudInfo;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.sdzn.fuzhuxian.api.controller.BaseController;
+import com.sdzn.fuzhuxian.api.controller.JsonResultBuilder;
+import com.sdzn.fuzhuxian.api.controller.Status;
+import com.sdzn.fuzhuxian.api.domain.model.student.SchoolStudentGo;
+import com.sdzn.fuzhuxian.api.service.student.SchoolStudentGoService;
+
+/**
+ * 
+ * SchoolStudentGoController <学校学生就学>
+ * 
+ * <p>
+ * detailed comment
+ * @author 武海之 2016年7月16日
+ * @see
+ * @since 1.0
+ */
+@Controller
+@RequestMapping("/school/studengtgo")
+public class SchoolStudentGoController extends BaseController {
+    @Autowired
+    private SchoolStudentGoService studentGoService;
+
+    private static final int FAIL = 0;
+
+    /**
+     * 查询学生就学信息表
+     * 
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/list")
+    public void getStudentGoInfo(HttpServletRequest request,
+            HttpServletResponse response) {
+        resultBuilder = new JsonResultBuilder();
+        List<SchoolStudentGo> list = studentGoService.selectAll();
+        doResponse(request, response, list);
+    }
+
+    /**
+     * 添加学生信息
+     * @param request
+     * @param response
+     * @param schoolStudentGo
+     */
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public void insert(HttpServletRequest request, HttpServletResponse response,
+            SchoolStudentGo schoolStudentGo) {
+        resultBuilder = new JsonResultBuilder();
+        if (!validate(schoolStudentGo)) {
+            resultBuilder.setStatus(Status.PARSE_PARAMETERS_ERROR);
+        }
+        else {
+            int row = studentGoService.insert(schoolStudentGo);
+            if (row == FAIL) {
+                resultBuilder.setStatus(Status.DB_OPERATION_ERROR);
+            }
+        }
+        doResponse(request, response);
+    }
+
+    /**
+     * 修改学生信息
+     * @param request
+     * @param response
+     * @param schoolStudentGo
+     */
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public void update(HttpServletRequest request, HttpServletResponse response,
+            SchoolStudentGo schoolStudentGo) {
+        resultBuilder = new JsonResultBuilder();
+        int row = studentGoService.update(schoolStudentGo);
+        if (row == FAIL) {
+            resultBuilder.setStatus(Status.DB_OPERATION_ERROR);
+        }
+
+        doResponse(request, response);
+    }
+
+    /**
+     * 删除学生信息
+     * @param id
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/delete", method = RequestMethod.GET)
+    public void delete(Integer id, HttpServletRequest request,
+            HttpServletResponse response) {
+        resultBuilder = new JsonResultBuilder();
+        int row = studentGoService.delete(id);
+        if (row == FAIL) {
+
+            resultBuilder.setStatus(Status.DB_OPERATION_ERROR);
+        }
+
+        doResponse(request, response);
+    }
+
+    /**
+     * 验证数据是否为空
+     * @param schoolStudentGo
+     * @return
+     */
+    private boolean validate(SchoolStudentGo schoolStudentGo) {
+        if (schoolStudentGo == null) {
+            return false;
+        }
+        if (StringUtils.isBlank(schoolStudentGo.getBookName())) {
+            return false;
+        }
+        if (StringUtils.isBlank(schoolStudentGo.getClassName())) {
+            return false;
+        }
+        if (StringUtils.isBlank(schoolStudentGo.getGradeName())) {
+            return false;
+        }
+        if (StringUtils.isBlank(schoolStudentGo.getStageName())) {
+            return false;
+        }
+        if (StringUtils.isBlank(schoolStudentGo.getVersionName())) {
+            return false;
+        }
+        if (schoolStudentGo.getBookId() == null) {
+            return false;
+        }
+        if (schoolStudentGo.getClassId() == null) {
+            return false;
+        }
+        if (schoolStudentGo.getGradeId() == null) {
+            return false;
+        }
+        if (schoolStudentGo.getCreateAccountId() == null) {
+            return false;
+        }
+        if (schoolStudentGo.getStageId() == null) {
+            return false;
+        }
+        if (schoolStudentGo.getStudentId() == null) {
+            return false;
+        }
+        if (schoolStudentGo.getVersionId() == null) {
+            return false;
+        }
+
+        return true;
+    }
+}

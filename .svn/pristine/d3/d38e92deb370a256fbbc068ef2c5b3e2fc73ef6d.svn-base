@@ -1,0 +1,42 @@
+package com.sdzn.fuzhuxian.api.domain.model.user;
+
+import java.io.Serializable;
+import java.util.Date;
+
+
+
+public class TokenCache implements Serializable{
+ 
+	private static final long serialVersionUID = 2301448307360116537L;
+
+	private String token;
+	
+	private Date date;
+	
+	private String clientType;
+	
+	public String getClientType() {
+		return clientType;
+	}
+
+	public void setClientType(String clientType) {
+		this.clientType = clientType;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	
+}

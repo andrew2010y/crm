@@ -1,0 +1,228 @@
+/* 微信设置 */
+.btn-wx{
+	background-color:#00c030;
+	color:#fff;
+    padding: 10px 15px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border-radius: 3px;
+    -webkit-user-select: none;
+}
+.btn-wx:hover{
+	background-color:#01af2d;
+	color:#fff;
+}
+.wechat-sevice-list{
+	margin: 0 30px;
+    border-top: 2px solid #d8d8d8;
+    border-bottom: 2px solid #d8d8d8;
+}
+.auth-wechat-sevice-list span{
+	margin-left:10px;
+}
+.auth-wechat-sevice-list{
+	margin: 0 60px 100px 60px;
+    border-top: 2px solid #d8d8d8;
+    border-bottom: 2px solid #d8d8d8;
+}
+.wechat-info-name{
+	min-width:250px;
+	display:inline-block;
+}
+.wechat-setup-title{
+	padding:20px 0;
+}
+.wechat-sevice-list span{
+	margin-left:20px;
+}
+.wechat-sevice-list1{
+	margin:0 10px; 
+	border-bottom: 1px solid #ededed;
+}
+.wechat-sevice-list2{
+	margin:0 10px; 
+}
+.wechat-sevice-mode1{
+	margin:15px 0;
+	padding:20px 60px; 
+	border-right:1px solid #ededed;
+}
+.wechat-sevice-mode2{
+	margin:15px 0;
+	padding:20px 60px; 
+}
+.wechat-setup-tips-list .tips-box li{
+	width:220px;
+	height:220px;
+	border:1px solid #e3e4e9;
+	margin-right:20px;
+	background-color:#e3e4e9;
+	border-radius:5px;
+}
+.wechat-setup-tips-list .tips-box li p{
+	height:190px;
+	margin-top:25px;
+	background-color:#fff;
+	padding:30px;
+}
+.wechat-setup-path{
+	padding: 0 40px;
+}
+.wechat-setup-step-list{
+	padding:0 10px;
+}
+.wechat-setup-step-list .wechat-setup-step{
+	padding:15px 0;
+}
+.wechat-setup-step-list .wechat-setup-step i{
+	width:30px;
+	height:30px;
+	color:#fff;
+	font-size:16px;
+	font-style:normal;
+	text-align:center;
+	line-height:30px;
+	border-radius:30px;
+	background-color:#77c2f7;
+	display:inline-block;
+	margin-right:5px;
+}
+.wechat-setup-step-pic{
+	margin-top:20px;
+}
+/* 微信设置end */
+/* 微信配置 start */
+.product-info .w-step{
+	min-height: 100px;
+} 
+.product-info .w-step .w-step-div{
+}
+.product-info .w-step i{
+	width: 22px;
+	height: 22px;
+	border-radius: 11px;
+	display: inline-block;
+	font-style: normal;
+	text-align: center;
+	line-height: 20px;
+	border: 1px solid #d8d8d8;
+}
+.product-info .w-step .w-step-line{
+	display:inline-block;
+	width: 1px;
+	height: 90px;
+	margin: 10px 9px;
+	border-left: 1px dotted #ccc;
+}
+.product-info .w-step .w-step-line.high-line{
+	height: 140px;
+	margin-top: -20px;
+}
+.product-info .w-step p{
+	margin-left: 20px;
+}
+.w-setup-div{
+	display:inline-block;
+	vertical-align: top;
+	padding: 20px 0;
+}
+.product-info .w-step p.w-tips{
+	margin-left: 0px;
+	max-width: 800px;
+	color: red;
+	font-size: 13px;
+	margin-bottom: 30px;
+}
+.w-step-div .form-group{
+	margin-bottom: 5px;
+}
+.w-step-div .form-group label{
+	width: 140px;
+}
+.w-step-div .form-group input{
+	width: 500px;
+}
+.w-step-div .form-group input[readonly]{
+	background:#dddddd;
+}
+.setup-btns{
+	margin-top: 20px;
+	padding-right: 50px;
+	text-align:right;	
+}
+.setup-btns button{
+	margin-left: 10px;
+}
+.left-15{
+	margin-left: 15px;
+}
+.close-set-content{
+	margin:0 20px;
+	font-size:14px;
+	line-height:2em;
+}
+.dialog-text{
+	display: inline-block;
+    width: 83%;
+    margin-left: 10px;
+    vertical-align: top;
+}
+.wechat-step-pic{
+	width:300px;
+	border:1px solid #e3e4e9;
+}
+/* 微信配置 end */
+/* 微信授权成功 */
+.box-content{
+	text-align:center;
+	width:80%;
+	margin:80px;
+	padding:30px;
+}
+.box-content-img{
+	margin:30px
+}
+.box-content-text{
+	font-size:44px;
+	color:#40b0ff;
+}
+.page-tips{
+	font-size:22px;
+	color: #cacaca;
+}
+#num{
+	color:#40b0ff;
+}
+.qrcode-img{
+	width:180px;
+	height:180px;
+	text-align:center;
+}
+.unqrcode-img{
+	 width:38px;
+	 margin:10px 0;
+}
+.unqrcode-text{
+	text-align:left;
+	line-height:2em;
+}
+.wechat-sevice-title{
+	padding-top:20px;
+}
+.wechat-info{
+	margin:15px 0 40px 0;
+}
+.wechat-info-text{
+	 margin:0 20px;
+	 line-height:2.5em;
+}
+.wechat-info-text-title{
+	font-weight:bold;
+}
+/* 微信授权成功end */

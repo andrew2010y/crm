@@ -1,0 +1,174 @@
+/**
+ * 文件名：APIHttpClient
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述：
+ * 修改人： yizhou
+ * 修改时间：16/7/18
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.controller;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * APIHttpClient〈一句话功能简述〉
+ * 〈功能详细描述〉
+ *
+ * @author yizhou
+ * @version v1.0.0
+ * @see ［相关类/方法］
+ * @since 产品/模块版本
+ */
+public class APIHttpClient {
+
+    // 接口地址
+    private static String APIHOST = "http://localhost:8082/teach-api";
+    private String url;
+    private Log logger = LogFactory.getLog(this.getClass());
+    private static final String pattern = "yyyy-MM-dd HH:mm:ss:SSS";
+    private HttpClient httpClient = null;
+    private HttpPost httpPost = null;
+    private HttpGet httpGet = null;
+    private long startTime = 0L;
+    private long endTime = 0L;
+    private int status = 0;
+
+
+    private void setUrl(String url) {
+        this.url = APIHOST + url;
+    }
+
+    public String get(String url) {
+
+        setUrl(url);
+
+        String body = null;
+        httpClient = new DefaultHttpClient();
+        httpGet = new HttpGet(this.url);
+
+        try {
+            startTime = System.currentTimeMillis();
+            HttpResponse response = httpClient.execute(httpGet);
+            endTime = System.currentTimeMillis();
+            int statusCode = response.getStatusLine().getStatusCode();
+            logger.info("statusCode:" + statusCode);
+            logger.info("调用API 花费时间(单位：毫秒)：" + (endTime - startTime));
+            if (statusCode != HttpStatus.SC_OK) {
+                logger.error("Method failed:" + response.getStatusLine());
+                status = 1;
+            }
+            // Read the response body
+            body = EntityUtils.toString(response.getEntity());
+
+        } catch (IOException e) {
+            // 网络错误
+            status = 3;
+        } finally {
+            logger.info("调用接口状态：" + status);
+
+        }
+        return body;
+
+    }
+
+    /**
+     * 调用 API
+     *
+     * @param params
+     * @return
+     */
+    public String post(String url, List<NameValuePair> params) {
+
+        setUrl(url);
+        httpClient = new DefaultHttpClient();
+        httpPost = new HttpPost(this.url);
+
+        String body = null;
+        //logger.info("parameters:" + parameters);
+        if (httpPost != null & params != null) {
+            try {
+
+                // 建立一个NameValuePair数组，用于存储欲传送的参数
+                ///	httpPost.addHeader("Content-type","application/json; charset=utf-8");
+                //httpPost.setHeader("Accept", "application/json");
+                //添加参数
+                httpPost.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+                startTime = System.currentTimeMillis();
+
+                logger.info(EntityUtils.toString(httpPost.getEntity()));
+
+                HttpResponse response = httpClient.execute(httpPost);
+
+                endTime = System.currentTimeMillis();
+                int statusCode = response.getStatusLine().getStatusCode();
+
+                logger.info("statusCode:" + statusCode);
+                logger.info("调用API 花费时间(单位：毫秒)：" + (endTime - startTime));
+                if (statusCode != HttpStatus.SC_OK) {
+                    logger.error("Method failed:" + response.getStatusLine());
+                    status = 1;
+                }
+
+                // Read the response body
+                body = EntityUtils.toString(response.getEntity());
+
+            } catch (IOException e) {
+                // 网络错误
+                status = 3;
+            } finally {
+                logger.info("调用接口状态：" + status);
+            }
+
+        }
+        return body;
+    }
+
+    /**
+     * 0.成功 1.执行方法失败 2.协议错误 3.网络错误
+     *
+     * @return the status
+     */
+    public int getStatus() {
+
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(int status) {
+
+        this.status = status;
+    }
+
+    /**
+     * @return the startTime
+     */
+    public long getStartTime() {
+
+        return startTime;
+    }
+
+    /**
+     * @return the endTime
+     */
+    public long getEndTime() {
+
+        return endTime;
+    }
+}

@@ -1,0 +1,23 @@
+package com.bigaka.crm.customer.action;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.bigaka.crm.customer.service.CustomerAddressService;
+
+/**
+ * 顾客收货地址
+ * @author Dylan_Tao
+ * @date 2015-12-15
+ * Copyright 2015 bigaka.com. All Rights Reserved. 
+ */
+@Controller
+@RequestMapping("/customer-address")
+public class CustomerAddressAction{
+	
+	@Autowired
+	private CustomerAddressService customerAddressService;
+	
+	
+}

@@ -1,0 +1,109 @@
+/*
+ * 文件名：LessonResource.java
+ * 版权：时代智囊
+ * 描述：教师教案信息资源实体
+ * 修改人：武海之
+ * 修改时间：2016年7月18日
+ * 修改内容：新增
+ * 修改人：〈武海之〉
+ * 修改时间：YYYY-MM-DD
+ * 修改单号：〈修改单号〉
+ * 修改内容：〈修改内容〉
+ */
+package com.sdzn.fuzhuxian.api.domain.model.teach;
+
+import java.util.Date;
+
+public class LessonResource {
+
+    private Integer id;
+
+    private String name;
+
+    private String suffix;
+
+    private Integer lessonId;
+
+    private Integer type;
+
+    private String url;
+
+    private Date downloadTime;
+
+    private Integer isDownload;
+
+    private Integer stage;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
+    public Integer getLessonId() {
+        return lessonId;
+    }
+
+    public void setLessonId(Integer lessonId) {
+        this.lessonId = lessonId;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public Date getDownloadTime() {
+        return downloadTime;
+    }
+
+    public void setDownloadTime(Date downloadTime) {
+        this.downloadTime = downloadTime;
+    }
+
+    public Integer getIsDownload() {
+        return isDownload;
+    }
+
+    public void setIsDownload(Integer isDownload) {
+        this.isDownload = isDownload;
+    }
+
+    public Integer getStage() {
+        return stage;
+    }
+
+    public void setStage(Integer stage) {
+        this.stage = stage;
+    }
+
+}

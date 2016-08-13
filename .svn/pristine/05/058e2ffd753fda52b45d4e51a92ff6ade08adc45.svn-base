@@ -1,0 +1,78 @@
+/**
+ * 文件名：ApiParams
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述：
+ * 修改人： yizhou
+ * 修改时间：16/7/15
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.util;
+
+import javax.servlet.ServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * ApiParams〈一句话功能简述〉
+ * 〈功能详细描述〉
+ *
+ * @author yizhou
+ * @version v1.0.0
+ * @see ［相关类/方法］
+ * @since 产品/模块版本
+ */
+public class ApiParams {
+
+    private Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+
+    public ApiParams(ServletRequest request) {
+
+        parameterMap = new HashMap<String, String[]>(request.getParameterMap());
+    }
+
+    public ApiParams() {
+
+        parameterMap = new HashMap<String, String[]>();
+    }
+
+    public Map<String, String[]> getParameterMap() {
+
+        return parameterMap;
+    }
+
+    public void putValue(String key, String value) {
+
+        parameterMap.put(key, new String[]{value});
+    }
+
+    public void putValues(String key, String[] values) {
+
+        parameterMap.put(key, values);
+
+    }
+
+    public String getValue(String key) {
+
+        String[] strings = parameterMap.get(key);
+        if (strings != null && strings.length > 0) {
+            return strings[0];
+        }
+        return "";
+    }
+
+    public int getIntValue(String key) {
+
+        String[] strings = parameterMap.get(key);
+        if (strings != null && strings.length > 0) {
+
+            return Integer.valueOf(strings[0]);
+        }
+        return 0;
+    }
+
+    public String[] getValues(String key) {
+
+        return parameterMap.get(key);
+
+    }
+}

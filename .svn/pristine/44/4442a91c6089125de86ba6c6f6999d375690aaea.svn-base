@@ -1,0 +1,63 @@
+/*
+ * 文件名：LessonService.java
+ * 版权：时代智囊
+ * 描述：〈描述〉
+ * 修改人：武海之
+ * 修改时间：2016年7月18日
+ * 修改内容：新增
+ * 修改人：〈武海之〉
+ * 修改时间：YYYY-MM-DD
+ * 修改单号：〈修改单号〉
+ * 修改内容：〈修改内容〉
+ */
+package com.sdzn.fuzhuxian.api.service.teach;
+
+import java.util.HashMap;
+import java.util.List;
+
+import com.sdzn.fuzhuxian.api.domain.model.teach.Lesson;
+
+/**
+ * LessonService 教师教案资源
+ * @author 武海之 2016年7月20日
+ * @see
+ * @since 1.0
+ */
+public interface LessonService {
+
+    /**
+     * 获取教师教案资源列表
+     * @param params
+     * @return
+     */
+    List<Lesson> list(HashMap<String, Object> params);
+
+    /**
+     * 通过id获取教师教案资源
+     * @param id
+     * @return
+     */
+    Lesson listById(Integer id);
+
+    /**
+     * 新增教师教案资源
+     * @param lesson
+     * @return
+     */
+    int insert(Lesson lesson);
+
+    /**
+     * 修改教师教案资源
+     * @param lesson
+     * @return
+     */
+    int updateById(Lesson lesson);
+
+    /**
+     * 删除教师教案资源
+     * @param id
+     * @return
+     */
+    int deleteById(Integer id);
+
+}

@@ -1,0 +1,31 @@
+/**
+ * 文件名：UserToRoleDao
+ * 版权：Copyright 2016-2027 SDZN. All Rights Reserved.
+ * 描述：用户角色关联信息
+ * 修改人： yanxk
+ * 修改时间：2016-07-15
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.domain.dao.user;
+
+import com.sdzn.fuzhuxian.api.domain.model.user.UserToRole;
+
+/**
+ * UserToRoleDao
+ * <p>
+ * 用户角色关联信息
+ * 
+ * @author yanxk 2016年7月15日
+ * @see
+ * @since 1.0
+ */
+public interface UserToRoleDao {
+  
+	UserToRole select(Integer id);
+	  
+	int insert(UserToRole record);
+	
+	int update(UserToRole record);
+	
+	int delete(UserToRole example);
+}

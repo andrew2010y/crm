@@ -1,0 +1,61 @@
+package com.bigaka.crm.customer.action;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.bigaka.crm.common.model.ServiceResult;
+import com.bigaka.crm.customer.service.CustomerTagService;
+
+/**
+ * 顾客标签管理
+ * @author Dylan_Tao
+ * @date 2015-12-02
+ * Copyright 2015 bigaka.com. All Rights Reserved. 
+ */
+@Controller
+@RequestMapping("/back/customer-tag")
+public class CustomerTagAction{
+	
+	@Autowired
+	private CustomerTagService customerTagService;
+	
+	@ResponseBody
+	@RequestMapping("/save")
+	public boolean saveCustomerTag(@RequestParam List<Integer> customerIds,@RequestParam List<Long> tagIds){
+		if(customerIds!=null && customerIds.size()>0 && tagIds!=null && tagIds.size()>0){
+			ServiceResult<Boolean> result = customerTagService.batchSaveCustomerTag(customerIds, tagIds);
+			return result.getResult();
+		}else{
+			return false;
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping("/clear")
+	public boolean clearCustomerTag(@RequestParam Integer customerId){
+		if(customerId!=null){
+			ServiceResult<Boolean> result = customerTagService.clearCustomerTag(customerId);
+			return result.getResult();
+		}else{
+			return false;
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/delete")
+	public boolean deleteUser(Long tagId,Long userId){
+		return customerTagService.deleteCustomerTag(tagId,userId).getResult();
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/batch-delete")
+	public boolean deleteUsers(Long tagId,Long[] userIds){
+		return customerTagService.batchDeleteCustomerTag(tagId,userIds).getResult();
+	}
+	
+}

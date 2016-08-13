@@ -1,0 +1,63 @@
+/*
+ * 文件名：MenuController
+ * 版权：Copyright 2016-2026 SDZN. All Rights Reserved.
+ * 描述：  菜单资源单管理
+ * 修改人： yanxk
+ * 修改时间：2016-07-15
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.controller.menu;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.sdzn.fuzhuxian.api.controller.BaseController;
+import com.sdzn.fuzhuxian.api.controller.JsonResultBuilder;
+import com.sdzn.fuzhuxian.api.domain.model.menu.Menu;
+import com.sdzn.fuzhuxian.api.service.menu.MenuService;
+import com.sdzn.fuzhuxian.api.service.role.RoleService;
+
+/**
+*
+* MenuController 菜单资源单管理
+*
+*
+* @author yanxk 2016年7月15日
+* @see
+* @since 1.0
+*/
+@RestController
+@RequestMapping("/menu")
+public class MenuController extends BaseController {
+	
+	@Autowired
+	private MenuService menuService;
+	@Autowired
+	private RoleService roleService;
+	
+	/**
+     * 获取菜单资源
+     * @param request
+     * @param response
+     * @return 返回json字符串
+     */
+	@RequestMapping(value="/list/{id}",method={RequestMethod.GET})
+	private void list (@PathVariable Integer id,
+		HttpServletRequest request, HttpServletResponse response) {
+			 
+		resultBuilder = new JsonResultBuilder();
+		List<Menu> menuList = null;
+		
+		doResponse(request, response, menuList);
+	}
+	
+	
+}

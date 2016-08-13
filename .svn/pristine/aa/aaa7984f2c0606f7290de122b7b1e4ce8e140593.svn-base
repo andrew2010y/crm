@@ -1,0 +1,54 @@
+/**
+ * 文件名：ConstantURL
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述：
+ * 修改人： yizhou
+ * 修改时间：16/7/15
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.util;
+
+/**
+ * ConstantURL〈一句话功能简述〉 〈功能详细描述〉
+ * 
+ * @author yizhou
+ * @version v1.0.0
+ * @see ［相关类/方法］
+ * @since 产品/模块版本
+ */
+public class Constant {
+
+	/**
+     *
+     */
+	public static final String RESOURCE_HOST = "http://192.168.0.238:8080/dataweb";
+
+	/**
+	 * Resource URL : 学段查询
+	 */
+	public static final String LEVEL_SEARCH_URL = RESOURCE_HOST + "/level";
+
+	/**
+	 * Resource URL : 学科查询
+	 */
+	public static final String SUBJECT_SEARCH_URL = RESOURCE_HOST + "/subjectSelectByLevel";
+
+	/**
+	 * Resource URL : 年级查询
+	 */
+	public static final String GRADE_SEARCH_URL = RESOURCE_HOST + "/gradeSelectBySubject";
+
+	/**
+	 * Resource URL : 版本查询
+	 */
+	public static final String VERSION_SEARCH_URL = RESOURCE_HOST + "/versionSelectBySubject";
+	/**
+	 * Resource URL :册别查询
+	 */
+	public static final String VOLUME_SEARCH_URL = RESOURCE_HOST + "/volumeSelectByGradeAndVersion";
+	/**
+	 * Resource URL :地区查询
+	 */
+	public static final String ZONE_SEARCH_URL = RESOURCE_HOST + "/zone";
+
+}

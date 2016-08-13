@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sdzn.fuzhuxian.api.domain.dao.teacher.TeacherTeachDAO">
+	<resultMap id="base_result_map"
+		type="com.sdzn.fuzhuxian.api.domain.model.teacher.SchoolTeacherTeach">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="duty" property="duty" jdbcType="VARCHAR" />
+		<result column="teacher_id" property="teacherId" jdbcType="INTEGER" />
+		<result column="stage_id" property="stageId" jdbcType="INTEGER" />
+		<result column="stage_name" property="stageName" jdbcType="VARCHAR" />
+		<result column="subject_id" property="subjectId" jdbcType="INTEGER" />
+		<result column="subject_name" property="subjectName" jdbcType="VARCHAR" />
+		<result column="grade_id" property="gradeId" jdbcType="INTEGER" />
+		<result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+		<result column="version_id" property="versionId" jdbcType="INTEGER" />
+		<result column="version_name" property="versionName" jdbcType="VARCHAR" />
+		<result column="book_id" property="bookId" jdbcType="INTEGER" />
+		<result column="book_name" property="bookName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="create_account_id" property="createAccountId"
+			jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="base_column_list">
+		id, duty, teacher_id, stage_id, stage_name, subject_id,
+		subject_name,
+		grade_id, grade_name,
+		version_id, version_name, book_id,
+		book_name, create_time, create_account_id
+	</sql>
+	<select id="selectById" resultMap="base_result_map"
+		parameterType="com.sdzn.fuzhuxian.api.domain.model.teacher.SchoolTeacherTeach">
+		select
+		<include refid="base_column_list" />
+		from teach_school_teacher_teach
+		where id = #{id,jdbcType=INTEGER}
+		<!-- and
+		duty = #{duty,jdbcType=VARCHAR} -->
+	</select>
+	<select id="selectAll" resultMap="base_result_map">
+		SELECT * FROM
+		teach_school_teacher_teach
+	</select>
+	<insert id="insert"
+		parameterType="com.sdzn.fuzhuxian.api.domain.model.teacher.SchoolTeacherTeach"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into
+		teach_school_teacher_teach (id, duty,
+		teacher_id,
+		stage_id, stage_name,
+		subject_id,
+		subject_name, grade_id,
+		grade_name,
+		version_id, version_name,
+		book_id,
+		book_name, create_time,
+		create_account_id
+		)
+		values
+		(#{id,jdbcType=INTEGER},
+		#{duty,jdbcType=VARCHAR},
+		#{teacherId,jdbcType=INTEGER},
+		#{stageId,jdbcType=INTEGER},
+		#{stageName,jdbcType=VARCHAR},
+		#{subjectId,jdbcType=INTEGER},
+		#{subjectName,jdbcType=VARCHAR},
+		#{gradeId,jdbcType=INTEGER},
+		#{gradeName,jdbcType=VARCHAR},
+		#{versionId,jdbcType=INTEGER},
+		#{versionName,jdbcType=VARCHAR},
+		#{bookId,jdbcType=INTEGER},
+		#{bookName,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{createAccountId,jdbcType=INTEGER}
+		)
+	</insert>
+	<update id="updateById"
+		parameterType="com.sdzn.fuzhuxian.api.domain.model.teacher.SchoolTeacherTeach">
+		update teach_school_teacher_teach
+		<set>
+			<if test="teacherId != null">
+				teacher_id = #{teacherId,jdbcType=INTEGER},
+			</if>
+			<if test="stageId != null">
+				stage_id = #{stageId,jdbcType=INTEGER},
+			</if>
+			<if test="stageName != null">
+				stage_name = #{stageName,jdbcType=VARCHAR},
+			</if>
+			<if test="subjectId != null">
+				subject_id = #{subjectId,jdbcType=INTEGER},
+			</if>
+			<if test="subjectName != null">
+				subject_name = #{subjectName,jdbcType=VARCHAR},
+			</if>
+			<if test="gradeId != null">
+				grade_id = #{gradeId,jdbcType=INTEGER},
+			</if>
+			<if test="gradeName != null">
+				grade_name = #{gradeName,jdbcType=VARCHAR},
+			</if>
+			<if test="versionId != null">
+				version_id = #{versionId,jdbcType=INTEGER},
+			</if>
+			<if test="versionName != null">
+				version_name = #{versionName,jdbcType=VARCHAR},
+			</if>
+			<if test="bookId != null">
+				book_id = #{bookId,jdbcType=INTEGER},
+			</if>
+			<if test="bookName != null">
+				book_name = #{bookName,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createAccountId != null">
+				create_account_id = #{createAccountId,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+		<!-- and duty = #{duty,jdbcType=VARCHAR} -->
+	</update>
+	<delete id="deleteById"
+		parameterType="com.sdzn.fuzhuxian.api.domain.model.teacher.SchoolTeacherTeach">
+		delete from teach_school_teacher_teach
+		where id =
+		#{id,jdbcType=INTEGER}
+		<!-- and duty = #{duty,jdbcType=VARCHAR} -->
+	</delete>
+</mapper>

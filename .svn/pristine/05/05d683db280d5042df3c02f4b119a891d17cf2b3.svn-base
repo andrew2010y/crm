@@ -1,0 +1,131 @@
+package com.sdzn.fuzhuxian.api.util;
+
+import com.sdzn.fuzhuxian.api.controller.Status;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.methods.PostMethod;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.Iterator;
+import java.util.Map.Entry;
+
+public class HttpClientUtils {
+
+
+    /**
+     * 调用Adapter接口
+     *
+     * @param url
+     * @param params
+     * @param result
+     * @return
+     */
+    public static Status doPost(String url, ApiParams params, JSONArray result) {
+
+
+        try {
+            HttpClient client = new HttpClient();
+
+            PostMethod post = new PostMethod(url);
+            setRequestHeader(post);
+            buildParams(params, post);
+            client.executeMethod(post);
+
+            int statusCode = post.getStatusCode();
+            String responseResult = getResponseResult(post).toString();
+            post.releaseConnection();
+
+            if (200 == statusCode) {
+
+                JSONObject adapterResponseResult = JSONObject.fromObject(responseResult);
+                int adapterStatusCode = adapterResponseResult.getInt("code");
+
+                if (Status.SUCCESS.getCode() == adapterStatusCode) {
+                    builderResult(result, adapterResponseResult);
+                    return Status.SUCCESS;
+                } else if (Status.SYSTEM_ERROR.getCode() <= adapterStatusCode && adapterStatusCode <= Status.API_NOT_IMPLEMENT.getCode()) {
+
+                    return Status.UNKNOWN_ERROR;
+                } else {
+
+                    return Status.getStatusByCode(adapterStatusCode);
+                }
+
+            } else { //Adapter服务异常
+
+                //TODO 日志
+                return Status.UNKNOWN_ERROR;
+            }
+
+        } catch (HttpException e) {
+
+            e.printStackTrace();
+            return Status.UNKNOWN_ERROR;
+        } catch (IOException e) {
+
+            e.printStackTrace();
+            return Status.UNKNOWN_ERROR;
+        } finally {
+
+          //TODO 日志
+        }
+    }
+
+    private static void builderResult(JSONArray result, JSONObject adapterResponseResult) {
+
+        JSONArray jsonArray = adapterResponseResult.getJSONArray("data");
+
+        if (!jsonArray.isEmpty()) {
+
+            result.addAll(jsonArray);
+        }
+    }
+
+    private static StringBuffer getResponseResult(PostMethod post) throws IOException {
+
+        InputStream in = post.getResponseBodyAsStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8")));
+        StringBuffer stringBuffer = new StringBuffer();
+        String strLine = "";
+        while (null != (strLine = br.readLine())) {
+
+            stringBuffer.append(strLine);
+        }
+        return stringBuffer;
+    }
+
+    private static void setRequestHeader(PostMethod post) {
+
+        post.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+    }
+
+    private static void buildParams(ApiParams params, PostMethod post) {
+
+        for (Entry<String, String[]> entry : params.getParameterMap().entrySet()) {
+            String[] values = entry.getValue();
+            if (values.length == 0)
+                continue;
+
+            if (values.length > 1) {
+                for (String value : values) {
+                    post.addParameter(entry.getKey(), value);
+                }
+            } else {
+                post.addParameter(entry.getKey(), entry.getValue()[0]);
+            }
+        }
+    }
+
+
+    public static Status doGet(String url, ApiParams params, JSONArray result) {
+
+        return doPost(url, params, result);
+    }
+
+}

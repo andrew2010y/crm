@@ -1,0 +1,66 @@
+/*
+ * 文件名：AccountServiceImpl
+ * 版权：Copyright 2016-2027 SDZN. All Rights Reserved.
+ * 描述：  账号信息服务层
+ * 修改人： yanxk
+ * 修改时间：2016-07-15
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.service.impl.user;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sdzn.fuzhuxian.api.domain.dao.user.AccountDao;
+import com.sdzn.fuzhuxian.api.domain.model.user.Account;
+import com.sdzn.fuzhuxian.api.service.user.AccountService;
+
+/**
+ * AccountServiceImpl
+ * <p>
+ * 账号信息服务层
+ * 
+ * @author yanxk 2016年7月15日
+ * @see
+ * @since 1.0
+ */
+@Service("accountService")
+public class AccountServiceImpl implements AccountService {
+    @Autowired
+    private AccountDao accountDao;
+     
+	@Override
+	public int save(Account bean) {
+		return accountDao.save(bean);
+	}
+	
+	@Override
+	public Account get(Integer id){
+		return accountDao.get(id);
+	}
+	
+	@Override
+	public int delete(Integer id){
+		return accountDao.delete(id);
+	}
+	
+	/**
+     * 根据用户名、密码查询账号信息
+     */
+	@Override
+	public Account getByNameAndPassword (String name,String password) {
+		Account bean = new Account();
+		
+		bean.setAccountName(name);
+		bean.setPassword(password);
+		
+		return accountDao.getByNameAndPassword(bean);
+	}
+	
+/*	
+	@Override
+	public List<Account> list() {
+		return null;//accountDao.list();
+	}
+*/
+}

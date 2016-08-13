@@ -1,0 +1,145 @@
+package com.sdzn.fuzhuxian.api.domain.model.school;
+
+import java.util.Date;
+
+public class School {
+    private Integer id;
+
+    private String name;
+
+    private String logo;
+
+    private String describe;
+
+    private Integer zoneId;
+
+    private String zoneName;
+
+    private String address;
+
+    private Date createTime;
+
+    private Boolean isValid;
+
+    private Boolean delFlag;
+
+    private Date delTime;
+
+    private String code;
+
+    private Integer textbookVersionId;
+
+    private String textbookVersionName;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
+
+    public String getDescribe() {
+        return describe;
+    }
+
+    public void setDescribe(String describe) {
+        this.describe = describe;
+    }
+
+    public Integer getZoneId() {
+        return zoneId;
+    }
+
+    public void setZoneId(Integer zoneId) {
+        this.zoneId = zoneId;
+    }
+
+    public String getZoneName() {
+        return zoneName;
+    }
+
+    public void setZoneName(String zoneName) {
+        this.zoneName = zoneName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Boolean getIsValid() {
+        return isValid;
+    }
+
+    public void setIsValid(Boolean isValid) {
+        this.isValid = isValid;
+    }
+
+    public Boolean getDelFlag() {
+        return delFlag;
+    }
+
+    public void setDelFlag(Boolean delFlag) {
+        this.delFlag = delFlag;
+    }
+
+    public Date getDelTime() {
+        return delTime;
+    }
+
+    public void setDelTime(Date delTime) {
+        this.delTime = delTime;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Integer getTextbookVersionId() {
+        return textbookVersionId;
+    }
+
+    public void setTextbookVersionId(Integer textbookVersionId) {
+        this.textbookVersionId = textbookVersionId;
+    }
+
+    public String getTextbookVersionName() {
+        return textbookVersionName;
+    }
+
+    public void setTextbookVersionName(String textbookVersionName) {
+        this.textbookVersionName = textbookVersionName;
+    }
+}

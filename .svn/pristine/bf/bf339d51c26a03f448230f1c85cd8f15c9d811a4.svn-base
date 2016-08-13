@@ -1,0 +1,177 @@
+/**
+ * 文件名：NetWorkController
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述：  网段信息 基本操作
+ * 修改人： 武海之
+ * 修改时间：2016-07-13
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.controller.app.network;
+
+import com.sdzn.fuzhuxian.api.controller.BaseController;
+import com.sdzn.fuzhuxian.api.controller.JsonResultBuilder;
+import com.sdzn.fuzhuxian.api.controller.Status;
+import com.sdzn.fuzhuxian.api.domain.model.network.NetWork;
+import com.sdzn.fuzhuxian.api.service.netWork.NetWorkService;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ *
+ * NetWorkController 网段信息数据管理
+ *
+ *
+ * @author 武海之 2016年7月13日
+ * @see
+ * @since 1.0
+ */
+@Controller
+@RequestMapping("/app/network")
+public class NetWorkController extends BaseController {
+
+    @Autowired
+    private NetWorkService service;
+
+    private static final int FAIL = 0;
+
+    /**
+     * 获取网段信息列表
+     * @param request
+     * @param response
+     * @return 返回json字符串
+     */
+    @RequestMapping(value = "/list")
+    public void selectAll(HttpServletRequest request,
+            HttpServletResponse response) {
+        resultBuilder = new JsonResultBuilder();
+        Map<String, String[]> map = request.getParameterMap();
+        String[] param = map.get("imei");
+        String imei = param[0].toString();
+        String[] param1 = map.get("type");
+        String type = param1[0].toString();
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("imei", imei);
+        params.put("type", type);
+        List<NetWork> list = new ArrayList<NetWork>();
+        if (!selectValidate(imei, type)) {
+            resultBuilder.setStatus(Status.VALIDATE_PARAMETERS_ERROR);
+            doResponse(request, response);
+        }
+        else {
+            list = service.list(params);
+            if (list.size() == FAIL) {
+                resultBuilder.setStatus(Status.NO_DATA_EXIST);
+                doResponse(request, response);
+            }
+            doResponse(request, response, list);
+        }
+    }
+
+    /**
+     * 新增网段设置
+     * @param netWork
+     * @return
+     */
+    @RequestMapping(value = "/save")
+    public void insert(NetWork netWork, HttpServletRequest request,
+            HttpServletResponse response) {
+        resultBuilder = new JsonResultBuilder();
+        if (!validate(netWork)) {
+            resultBuilder.setStatus(Status.PARSE_PARAMETERS_ERROR);
+        }
+        else {
+            int row = service.insert(netWork);
+            if (row == FAIL) {
+                resultBuilder.setStatus(Status.NETWORK_DB_OPERATION_ERROR);
+            }
+        }
+        doResponse(request, response);
+    }
+
+    /**
+     * 修改网段设置
+     * @param netWork
+     * @return
+     */
+    @RequestMapping(value = "/update")
+    public void update(NetWork netWork, HttpServletRequest request,
+            HttpServletResponse response) {
+        resultBuilder = new JsonResultBuilder();
+        int row = service.update(netWork);
+        if (row == FAIL) {
+            resultBuilder.setStatus(Status.NETWORK_DB_OPERATION_ERROR);
+        }
+
+        doResponse(request, response);
+    }
+
+    /**
+     * 删除网段
+     * @param id 通过id进行网段删除
+     * @return
+     */
+    @RequestMapping(value = "/delete")
+    public void delete(@RequestParam(value = "id") Integer id,
+            HttpServletRequest request, HttpServletResponse response) {
+        resultBuilder = new JsonResultBuilder();
+        int row = service.delete(id);
+        if (row == FAIL) {
+
+            resultBuilder.setStatus(Status.NETWORK_DB_OPERATION_ERROR);
+        }
+
+        doResponse(request, response);
+    }
+
+    private boolean selectValidate(String imei, String type) {
+
+        if (StringUtils.isBlank(imei)) {
+
+            return false;
+        }
+        if (StringUtils.isBlank(type)) {
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 验证数据是否为空
+     * @param netWork
+     * @return
+     */
+    private boolean validate(NetWork netWork) {
+        if (netWork == null) {
+            return false;
+        }
+        if (StringUtils.isBlank(netWork.getName())) {
+            return false;
+        }
+        if (StringUtils.isBlank(netWork.getImei())) {
+            return false;
+        }
+        if (StringUtils.isBlank(netWork.getUrl())) {
+            return false;
+        }
+
+        if (netWork.getType() == null) {
+            return false;
+        }
+
+        return true;
+    }
+}

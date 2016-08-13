@@ -1,0 +1,79 @@
+/*
+ * 文件名：ResDictRole.java
+ * 版权：时代智囊
+ * 描述：学校管理员表实体类
+ * 修改人：王宁
+ * 修改时间：2016年7月14日
+ * 修改内容：新增
+
+ */
+package com.sdzn.fuzhuxian.api.domain.model.user;
+
+import java.util.Date;
+
+public class SchoolAdmin {
+	private Integer id;
+	private String accountName;
+	private Integer createAccountId;
+	private Date createTime;
+	private Integer schoolId;
+	private String schoolName;
+	private String realName;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName == null ? null : accountName.trim();
+
+	}
+
+	public Integer getCreateAccountId() {
+		return createAccountId;
+	}
+
+	public void setCreateAccountId(Integer createAccountId) {
+		this.createAccountId = createAccountId;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public Integer getSchoolId() {
+		return schoolId;
+	}
+
+	public void setSchoolId(Integer schoolId) {
+		this.schoolId = schoolId;
+	}
+
+	public String getSchoolName() {
+		return schoolName;
+	}
+
+	public void setSchoolName(String schoolName) {
+		this.schoolName = schoolName == null ? null : schoolName.trim();
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName == null ? null : realName.trim();
+	}
+}

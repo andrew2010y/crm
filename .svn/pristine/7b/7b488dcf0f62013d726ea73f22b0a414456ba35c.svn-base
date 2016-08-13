@@ -1,0 +1,96 @@
+package com.sdzn.fuzhuxian.api.domain.model.teach;
+
+import java.util.Date;
+
+public class TeachClass {
+   
+	private Integer id;
+
+    private String name;
+
+    private String logo;
+
+    private Integer schoolId;
+
+    private Integer adviserId;
+
+    private String adviserName;
+
+    private Integer startYear;
+
+    private String describe;
+
+    private Date createTime;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
+
+    public Integer getSchoolId() {
+        return schoolId;
+    }
+
+    public void setSchoolId(Integer schoolId) {
+        this.schoolId = schoolId;
+    }
+
+    public Integer getAdviserId() {
+        return adviserId;
+    }
+
+    public void setAdviserId(Integer adviserId) {
+        this.adviserId = adviserId;
+    }
+
+    public String getAdviserName() {
+        return adviserName;
+    }
+
+    public void setAdviserName(String adviserName) {
+        this.adviserName = adviserName;
+    }
+
+    public Integer getStartYear() {
+        return startYear;
+    }
+
+    public void setStartYear(Integer startYear) {
+        this.startYear = startYear;
+    }
+
+    public String getDescribe() {
+        return describe;
+    }
+
+    public void setDescribe(String describe) {
+        this.describe = describe;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+}

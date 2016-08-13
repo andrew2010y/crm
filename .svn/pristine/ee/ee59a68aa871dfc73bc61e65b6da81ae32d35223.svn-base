@@ -1,0 +1,43 @@
+package com.sdzn.fuzhuxian.api.domain.model.lesson;
+
+public class LessonTarget {
+    private Integer id;
+
+    private Integer lessonId;
+
+    private String studyTarget;
+
+    private Boolean stage;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getLessonId() {
+        return lessonId;
+    }
+
+    public void setLessonId(Integer lessonId) {
+        this.lessonId = lessonId;
+    }
+
+    public String getStudyTarget() {
+        return studyTarget;
+    }
+
+    public void setStudyTarget(String studyTarget) {
+        this.studyTarget = studyTarget;
+    }
+
+    public Boolean getStage() {
+        return stage;
+    }
+
+    public void setStage(Boolean stage) {
+        this.stage = stage;
+    }
+}

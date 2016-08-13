@@ -1,0 +1,160 @@
+/**
+ * 文件名：BaseController
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述：
+ * 修改人： yizhou
+ * 修改时间：16/7/11
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.controller;
+
+import com.sdzn.fuzhuxian.api.util.ApiParams;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
+import java.util.Map;
+
+/**
+ * BaseController〈一句话功能简述〉
+ * 〈功能详细描述〉
+ *
+ * @author yizhou
+ * @version v1.0.0
+ * @see
+ * @since 产品/模块版本
+ */
+public abstract class BaseController {
+
+    protected static final String HEADER = "Access-Control-Allow-Origin";
+    protected static final String STAR = "*";
+    protected static final String CALLBACK = "callback";
+    protected static final String CONTENTTYPE = "text/json; charset=UTF-8";
+    protected static final String UTF_8 = "UTF-8";
+    protected static final String LEFT_START = "(";
+    protected static final String RIGHT_END = ");";
+
+    protected static final String IN = "::IN::";
+    protected static final String OUT = "::OUT::";
+    protected static final String MAOHAO = ":";
+    protected static final String EMPTY_STRING = "";
+    protected static final String SPLIT_ = "-";
+    protected static final String ENTER = "\n\t";
+    protected static final String SPLIT = ",";
+
+    private HttpServletRequest request;
+
+    private HttpServletResponse response;
+
+    protected JsonResultBuilder resultBuilder;
+
+    protected static Logger logger = Logger.getLogger("Controller");
+    protected String loggerId;
+
+    protected static final String CHANNELID = "channelId";
+
+    public BaseController() {
+
+        this.resultBuilder = new JsonResultBuilder();
+    }
+
+    protected void init(HttpServletRequest request, HttpServletResponse response) {
+        this.request = request;
+        this.response = response;
+    }
+
+    /**
+     * 设置返回数据
+     *
+     * @param obj
+     */
+    protected void setResult(Object obj) {
+        if(obj!=null){
+            this.resultBuilder.setResult(obj);
+        }
+    }
+
+    /**
+     * 返回数据
+     */
+    public void doResponse(HttpServletRequest request, HttpServletResponse response,Object result) {
+
+        this.init(request, response);
+        this.setResult(result);
+        this.toJson();
+    }
+
+    /**
+     * 返回数据
+     */
+    public void doResponse(HttpServletRequest request, HttpServletResponse response) {
+
+        this.init(request, response);
+        
+        this.toJson();
+    }
+    
+    /**
+     * 返回数据
+     */
+    public void doResponse() {
+
+        this.toJson();
+    }
+    
+    private void toJson() {
+
+        try {
+            response.setHeader(HEADER, STAR); // 解决跨域访问的问题
+            response.setContentType(CONTENTTYPE);
+
+            OutputStream os = response.getOutputStream();
+
+            String resultStr = resultBuilder.getResult().toString();
+
+            // 如果ajax跨域调用使用callback函数，将返回值更改为callback制定函数
+            String callback = request.getParameter(CALLBACK);
+            if (StringUtils.isNotBlank(callback)) {
+                resultStr = callback + LEFT_START + resultStr + RIGHT_END;
+            }
+
+            os.write(resultStr.getBytes(UTF_8));
+            os.flush();
+            os.close();
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+    }
+    
+    
+    private String getLogInfo() {
+
+        String result = this.getClass().getName();
+        result = result + MAOHAO + loggerId + IN;
+        Map<String, String[]> map = request.getParameterMap();
+        Object[] keys = map.keySet().toArray();
+        for (int i = 0; i < keys.length; i++) {
+            String key = (String) keys[i];
+            String value = request.getParameter(key);
+            result = result + SPLIT + key + MAOHAO + value;
+            // TODO
+            // if (CARTKEY_SINGLE.equalsIgnoreCase(key)) {
+            // result = result + SPLIT + CART + MAOHAO +
+            // CartContainer.getCartJson(value);
+            // }
+        }
+        return result;
+    }
+
+    protected ApiParams parseParameters(ServletRequest request) {
+
+        ApiParams params = new ApiParams(request);
+
+        return params;
+    }
+
+}

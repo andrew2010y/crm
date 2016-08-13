@@ -1,0 +1,34 @@
+/**
+ * 文件名：MenuDao
+ * 版权：Copyright 2016-2027 SDZN. All Rights Reserved.
+ * 描述：菜单信息
+ * 修改人： yanxk
+ * 修改时间：2016-07-15
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.domain.dao.menu;
+
+import java.util.List;
+
+import com.sdzn.fuzhuxian.api.domain.model.menu.Menu;
+
+/**
+ * MenuDao
+ * <p>
+ * 菜单信息
+ * 
+ * @author yanxk 2016年7月15日
+ * @see
+ * @since 1.0
+ */
+public interface MenuDao {
+	
+	/*public int save(Account bean);
+	
+	public int delete(Integer id);
+	
+	public Account get(Integer id);*/
+	
+	public List<Menu> getByRoleId(Integer roleId);
+   
+}

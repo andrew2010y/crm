@@ -1,0 +1,69 @@
+package com.sdzn.fuzhuxian.api.domain.model.role;
+
+import java.io.Serializable;
+import java.util.Date;
+
+public class Role implements Serializable{
+    
+	private static final long serialVersionUID = 2310594955847140165L;
+
+	private Integer id;
+
+    private String name;
+ 
+    private String identify;
+
+    private String describe;
+
+    private Integer createAccountId;
+
+    private Date createTime;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getIdentify() {
+        return identify;
+    }
+
+    public void setIdentify(String identify) {
+        this.identify = identify;
+    }
+
+    public String getDescribe() {
+        return describe;
+    }
+
+    public void setDescribe(String describe) {
+        this.describe = describe;
+    }
+
+    public Integer getCreateAccountId() {
+        return createAccountId;
+    }
+
+    public void setCreateAccountId(Integer createAccountId) {
+        this.createAccountId = createAccountId;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+}

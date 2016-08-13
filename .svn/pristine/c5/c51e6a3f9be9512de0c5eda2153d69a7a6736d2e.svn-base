@@ -1,0 +1,69 @@
+/*
+ * 文件名：NetWorkService
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述：  网段信息 服务层
+ * 修改人： 武海之
+ * 修改时间：2016-07-13
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.service.impl.netWork;
+
+import com.sdzn.fuzhuxian.api.domain.dao.network.NetWorkDao;
+import com.sdzn.fuzhuxian.api.domain.model.network.NetWork;
+import com.sdzn.fuzhuxian.api.service.netWork.NetWorkService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * NetWorkService
+ * <p>
+ * 网段信息 服务层
+ * 
+ * @author 武海之 2016年7月13日
+ * @see
+ * @since 1.0
+ */
+
+@Service
+public class NetWorkServiceImpl implements NetWorkService {
+
+    @Autowired
+    private NetWorkDao netWorkDao;
+
+    /**
+     * 查询网段信息列表
+     */
+    @Override
+    public List<NetWork> selectByImei(String imei) {
+        
+        return netWorkDao.selectByImei(imei);
+    }
+
+    /**
+     * 新增网段信息
+     */
+    @Override
+    public int insert(NetWork netWork) {
+        return netWorkDao.insert(netWork);
+    }
+
+    /**
+     * 修改网段信息
+     */
+    @Override
+    public int update(NetWork netWork) {
+        return netWorkDao.updateById(netWork);
+    }
+
+    /**
+     * 删除网段信息
+     */
+    @Override
+    public int delete(Integer id) {
+        return netWorkDao.deleteById(id);
+    }
+
+}

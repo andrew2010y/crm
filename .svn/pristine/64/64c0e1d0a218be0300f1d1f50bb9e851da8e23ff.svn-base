@@ -1,0 +1,45 @@
+package com.sdzn.fuzhuxian.api.service.user;
+ 
+import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import com.sdzn.fuzhuxian.api.controller.app.login.LoginController;
+import com.sdzn.fuzhuxian.api.domain.model.user.TokenCache;
+
+public class DaemonToken implements Runnable {
+	@Override
+	public void run() {
+//		try {
+//			Map<String ,TokenCache> cache = LoginController.cache;
+//
+//			for (Map.Entry<String, TokenCache> entry : cache.entrySet()) {
+//				boolean check =false;
+//
+//				TokenCache tokenCache = entry.getValue();
+//
+//				Date addtime = tokenCache.getDate();
+//
+//				if(tokenCache.getClientType().equals(ClientType.IOS.name)){
+//					check = LoginController.isLatestWeek(addtime, new Date());
+//				}
+//				if(tokenCache.getClientType().equals(ClientType.ANDROID.name)){
+//					check = LoginController.isLatestHour(addtime, new Date());
+//				}
+//
+//				// 校验时间是否过期
+//				if(check){
+//					break;
+//				}else{
+//					cache.remove(entry.getKey());
+//				}
+//			}
+//
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		} finally {
+//		}
+	}
+
+}

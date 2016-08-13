@@ -1,0 +1,60 @@
+/* 营销积分设置 */
+.point-give{
+	padding:10px;
+	border-bottom:1px solid #d8d8d8;
+}
+.point-give-title,.point-use-title{
+	font-weight: 600;
+	font-size: 15px;
+}
+.point-content .line label.control-label{
+    width: 160px;
+}
+.points-box .check-div {
+    display: inline-block;
+    height: 34px;
+    line-height: 34px;
+    float: left;
+}
+.point-content .fen-div {
+    margin-left: 100px;
+    display: inline-block;
+    float: right;
+}
+.point-content .fen-div label{
+    width:240px;
+}
+.point-content .form-control.inline.midwidth {
+    width: 130px;
+}
+.point-content .tips-line {
+    color: #aaa;
+    font-size: 13px;
+    padding-left:20px;
+}
+.point-content .line {
+    margin-bottom: 10px;
+    padding-left: 20px;
+}
+.point-content em {
+    color: red;
+    margin-right: 5px;
+}
+.point-other ul{
+	padding-left:20px;
+	margin-top: 6px;
+}
+.point-use{
+	padding:10px;
+}
+.point-use ul{
+	padding-left:20px;
+}
+.mr15{
+	margin-right:15px;
+}
+.unauth-icon{
+	margin-left:10px;
+	margin-right:5px;
+}
+/* 营销积分设置 end */

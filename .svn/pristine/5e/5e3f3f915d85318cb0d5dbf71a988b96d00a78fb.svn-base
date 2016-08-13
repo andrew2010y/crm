@@ -1,0 +1,45 @@
+/**
+ * 文件名：AccountTimeTaskThreadPoolListener
+ * 版权：Copyright 2002-2017 SDZN. All Rights Reserved.
+ * 描述：
+ * 修改人： yizhou
+ * 修改时间：16/7/14
+ * 修改内容：新增
+ */
+package com.sdzn.fuzhuxian.api.controller.user;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
+/**
+ * AccountTimeTaskThreadPoolListener〈一句话功能简述〉
+ * 〈功能详细描述〉
+ *
+ * @author yizhou
+ * @version v1.0.0
+ * @see ［相关类/方法］
+ * @since 产品/模块版本
+ */
+public class AccountTimeTaskThreadPoolListener implements ServletContextListener {
+
+
+    public static ScheduledExecutorService service;//线程池
+
+    @Override
+    public void contextInitialized(ServletContextEvent servletContextEvent) {
+
+        service = Executors.newScheduledThreadPool(5);
+
+        //TODO 服务器启动事件记录
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+
+        service.shutdownNow();//关闭线程池
+
+        //TODO 服务器停止事件记录
+    }
+}

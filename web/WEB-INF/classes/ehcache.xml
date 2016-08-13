@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <ehcache>
+   <defaultCache
+      maxElementsInMemory="1000" 
+      eternal="false"
+      timeToIdleSeconds="1200"
+      timeToLiveSeconds="1200"
+      overflowToDisk="false">
+    </defaultCache>
+
+   <cache name="test"
+         maxElementsInMemory="1000"
+         maxElementsOnDisk="5000"
+         eternal="false"
+         timeToIdleSeconds="120"
+         timeToLiveSeconds="0">
+   </cache>
+</ehcache>
