@@ -54,6 +54,8 @@ public class Customer implements Serializable{
 	
 	private Boolean sysnCSB; //默认是同步到csb，csb在调用相关服务时必须设置成false，否则会导致循环同步
 	private Integer customerType;
+	private String purchaseAmount;
+	
 	//ext
 	//用户填写的自定义表单内容
 	private List<FormCustomerProp> customerProps;
@@ -398,5 +400,14 @@ public class Customer implements Serializable{
 	public void setCustomerType(Integer customerType) {
 		this.customerType = customerType;
 	}
+
+	public String getPurchaseAmount() {
+		return purchaseAmount;
+	}
+
+	public void setPurchaseAmount(String purchaseAmount) {
+		this.purchaseAmount = purchaseAmount;
+	}
+	
 }
 

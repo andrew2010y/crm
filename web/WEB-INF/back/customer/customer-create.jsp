@@ -94,14 +94,26 @@
 				        						<div class="form-group">
 				        							<label class="search-label inline" >会员类型：</label>
 				                        			<span class="uinfo_span"><!-- disabled="disabled" -->
-				                        				<select class="form-control inline shot-select" >
+				                        				<select id="customerType"  name="customerType" class="form-control inline shot-select">  
 				                        				<!-- <select name="channel" class="form-control inline s-input" > -->
-											                <option>车友会员</option>
-											                <option>VIP卡会员</option>
+											                <option value="0">车友会员</option>
+											                <option value="1">VIP卡会员</option>
 											            </select>
 				                        			</span>
 				        						</div>
 				        					</td>
+				        				</tr>
+				        				<tr>
+				        					<td>
+		            						<div class="form-group" id="purchaseAmount1">
+		            							<label class="search-label inline" for="member_phone">购车金额：</label>
+		            							<input type="text" class="form-control inline" maxlength="11" placeholder="请输入购车金额(万元)" name="purchaseAmount" id="purchaseAmount" >
+                                    					<em class="required">*</em>
+		            						</div>
+		            						<div class="form-group"  id="purchaseAmount2" style="display:none;">
+		            							<label class="search-label inline" for="member_phone">基金额度：</label>10万
+		            						</div>
+		            						</td>	
 				        				</tr>
 				        			</tbody>
 								</table>

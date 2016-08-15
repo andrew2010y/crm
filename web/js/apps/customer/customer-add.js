@@ -208,4 +208,16 @@
 		$('.custom-props').find('input').val('');
 		$('.custom-props').find('input[type="radio"]').removeAttr('checked');
 	});
+	
+	$("#customerType").on("change",function(){
+		var customerType = $("#customerType").val();
+		if(customerType==1){
+			$("#purchaseAmount1").hide();
+			$("#purchaseAmount2").show();
+		}else{
+			$("#purchaseAmount2").hide();
+			$("#purchaseAmount1").show();
+		}
+	});
+	
 })(jQuery);

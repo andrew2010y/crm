@@ -28,7 +28,18 @@ public class CustomerDaoImpl implements CustomerDao{
 
 	@Override
 	public int saveCustomer(Customer customer) {
-		String sql = "insert into customer(parent_store_id,store_id,username,`password`,register_type,register_channel,open_id,login_time,update_time,create_time) values(?,?,?,?,?,?,?,?,?,?)";
+		StringBuffer sql = new StringBuffer();
+		
+		sql.append("insert into customer")
+		.append("(parent_store_id,store_id,username,`password`,")
+		.append("register_type,register_channel,open_id,login_time,update_time,")
+		.append("create_time,")
+		.append("customer_type,purchase_amount")
+		.append(")")
+		.append("values")
+		.append("(?,?,?,?,?,?,?,?,?,?,?,?)")
+		;
+		
 		List<Object> paramList = new ArrayList<Object>();
 		paramList.add(customer.getParentStoreId());
 		paramList.add(customer.getStoreId());
@@ -40,7 +51,10 @@ public class CustomerDaoImpl implements CustomerDao{
 		paramList.add(customer.getCreateTime());
 		paramList.add(customer.getCreateTime());
 		paramList.add(customer.getCreateTime());
-		return handler.saveReturnKey(sql, paramList.toArray());
+		paramList.add(customer.getCustomerType());
+		paramList.add(customer.getPurchaseAmount());
+		
+		return handler.saveReturnKey(sql.toString(), paramList.toArray());
 	}
 	 
 	public Customer getCustomer(Customer customer){ 
