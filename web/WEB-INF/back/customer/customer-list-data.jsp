@@ -92,25 +92,23 @@
 			<p class="store-val"></p>
 			<p><%-- ${wxcrm:formatDate(cust.createTime)} --%>
 			</p>
-			车友会员
+			<c:if test="${cust.customerType==0 || empty cust.customerType}"> 
+				车友会员
+			</c:if>
+			<c:if test="${cust.customerType==1}"> 
+				VIP卡会员
+			</c:if>
 		</td>
 		<!-- 最近消费 -->
 		<td>
 		<c:choose>
-			<c:when test="${cust.consumeTime==0 || empty cust.consumeTime}"> 
-				<p>-</p>
-				<p>-</p>
+			<c:when test="${cust.customerType==0}"> 
+				<c:if test="${not empty cust.purchaseAmount}"> 
+				<p>${cust.purchaseAmount}万</p>
+				</c:if>
 			</c:when>
 			<c:otherwise> 
-				<c:choose>
-					<c:when test="${cust.price==-1 }"> 
-						<p>-</p>
-					</c:when>
-					<c:otherwise> 
-						<p>${cust.price}元</p>
-					</c:otherwise>
-				</c:choose>
-				<p><%-- ${wxcrm:formatDate(cust.consumeTime)} --%></p>
+				<p>10万</p>
 			</c:otherwise>
 		</c:choose>
 		</td>

@@ -162,6 +162,11 @@ public class CustomerAction{
 			customer.setStoreId(1);
 			customer.setParentStoreId(1);
 			
+			Integer customerType = customer.getCustomerType();
+			if(customerType!=null&&customerType==1){
+				customer.setPurchaseAmount("10");
+			};
+			
 			/*if(customer.getStoreId()==null || customer.getStoreId().equals(store.getId())){//异常为空或选中为当前登录的店面
 				customer.setStoreId(store.getId());//更改
 				if(StoreType.RETAIL.getValue().equals(store.getType())){ //直营

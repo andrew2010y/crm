@@ -62,6 +62,27 @@ public class CustomerDetail implements Serializable{
 	//用户
 	private FormStorePropExt formStorePropExt;
 	
+	private Integer customerType;
+	
+	private String purchaseAmount;
+	
+	
+	public Integer getCustomerType() {
+		return customerType;
+	}
+
+	public void setCustomerType(Integer customerType) {
+		this.customerType = customerType;
+	}
+
+	public String getPurchaseAmount() {
+		return purchaseAmount;
+	}
+
+	public void setPurchaseAmount(String purchaseAmount) {
+		this.purchaseAmount = purchaseAmount;
+	}
+
 	public FormStorePropExt getFormStorePropExt() {
 		return formStorePropExt;
 	}

@@ -141,7 +141,9 @@ public class CustomerDetailDaoImpl implements CustomerDetailDao{
 					+ "cd.name,cd.logo,cd.create_time createTime, "
 					+ "cd.point,cd.accrual_point,"//,cc.consume_time consumeTime,IFNULL(cc.price,-1) as price
 					//,mc.card_no
-					+ "c.open_id,c.state,ce.perfect_degree, ce.follow_public_num,cd.nick_name ");
+					+ "c.open_id,c.state,ce.perfect_degree, ce.follow_public_num,cd.nick_name, ")
+					.append("c.customer_type customerType,c.purchase_amount purchaseAmount ")
+					;
 		}else{
 			sql.append("select c.customer_id customerId");
 		}
