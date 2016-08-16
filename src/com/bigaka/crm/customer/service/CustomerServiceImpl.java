@@ -3,6 +3,7 @@ package com.bigaka.crm.customer.service;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,9 @@ import com.bigaka.crm.form.model.FormCustomerProp;
 
 @Service("customerService")
 public class CustomerServiceImpl implements CustomerService{
-
+	@Autowired
+	private CustomerDao customerDao;
+	
 	@Override
 	public ServiceResult<Boolean> awardScoreAndCoupon(Customer arg0,
 			boolean arg1) {
@@ -167,8 +170,6 @@ public class CustomerServiceImpl implements CustomerService{
 
 	private static final Log log = LogFactory.getLog(CustomerServiceImpl.class);
 	
-	@Autowired
-	private CustomerDao customerDao;
 	@Autowired
 	private CustomerDetailDao customerDetailDao;
 	@Autowired
@@ -308,6 +309,33 @@ public class CustomerServiceImpl implements CustomerService{
 		Customer cr = new Customer();
 		cr.setCustomerId(customerId);
 		cr.setPhone(customer.getUsername());
+		
+		Long salePhone = customer.getSalePhone();
+		Integer customerType = customer.getCustomerType();
+		
+		if(salePhone!=null){
+			Customer customerSell = customerDao.getByParentStoreIdAndPhone(1, salePhone);
+			
+			//车提3%
+			//会员卡
+			if(customerSell!=null){
+				double sellAmount =0.0;
+				
+				if(customerType!=null&&customerType==1){
+					sellAmount = 0.09;
+				}else{
+					sellAmount = customer.getPurchaseAmount()*0.03;
+				}
+				customerSell.setSellAmount(
+						customerSell.getSellAmount()+sellAmount);
+				
+				customerSell.setPurchaseAmount(customerSell.getPurchaseAmount()
+						+sellAmount);
+				
+				// 更新
+				customerDao.updateCustomerPurchaseAmount(customerSell);
+			}
+		}
 		
 		return new ServiceResult<Customer>(Code.SUCCESS, "",cr);
 	}

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/include/taglib.jsp"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 	<c:if test="${empty page.result}">
          <tr data-totalCount="${page.totalCount}"><td colspan="12" class="center">暂无数据</td></tr>
     </c:if>
@@ -112,13 +113,17 @@
 			</c:otherwise>
 		</c:choose>
 		</td>
-		<!-- 积分 -->
 		<td>
+		 ${cust.sellAmount}
+		</td>
+		<!-- 积分 -->
+		<%-- <td>
 			</p>剩余：${cust.point}</p>
 			</p>累计：${cust.accrualPoint}</p>
-		</td>
+		</td> --%>
 		<!-- 标签 -->
 		<td class="label_td">
+		${cust.createTime}
 			<c:set var="custTagSize" value="${fn:length(custTagMap[cust.customerId]) }"></c:set>
 			<c:if test="${custTagSize<=4}">
 				 <c:forEach items="${custTagMap[cust.customerId]}" var="tag"> 

@@ -54,12 +54,21 @@ public class Customer implements Serializable{
 	
 	private Boolean sysnCSB; //默认是同步到csb，csb在调用相关服务时必须设置成false，否则会导致循环同步
 	private Integer customerType;
-	private String purchaseAmount;
+	private Double purchaseAmount;
+	private Double sellAmount;
 	
 	//ext
 	//用户填写的自定义表单内容
 	private List<FormCustomerProp> customerProps;
+	private Long salePhone;
 	
+	public Long getSalePhone() {
+		return salePhone;
+	}
+
+	public void setSalePhone(Long salePhone) {
+		this.salePhone = salePhone;
+	}
 	public enum RegisterChannel {
 		CK {
 			public byte getValue() {
@@ -401,12 +410,26 @@ public class Customer implements Serializable{
 		this.customerType = customerType;
 	}
 
-	public String getPurchaseAmount() {
+	public Double getPurchaseAmount() {
+		if(purchaseAmount==null){
+			purchaseAmount=0.0;
+		}
 		return purchaseAmount;
 	}
 
-	public void setPurchaseAmount(String purchaseAmount) {
+	public void setPurchaseAmount(Double purchaseAmount) {
 		this.purchaseAmount = purchaseAmount;
+	}
+
+	public Double getSellAmount() {
+		if(sellAmount==null){
+			sellAmount=0.0;
+		}
+		return sellAmount;
+	}
+
+	public void setSellAmount(Double sellAmount) {
+		this.sellAmount = sellAmount;
 	}
 	
 }

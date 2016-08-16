@@ -64,7 +64,8 @@ public class CustomerDetail implements Serializable{
 	
 	private Integer customerType;
 	
-	private String purchaseAmount;
+	private Double purchaseAmount;
+	private Double sellAmount;
 	
 	
 	public Integer getCustomerType() {
@@ -75,14 +76,28 @@ public class CustomerDetail implements Serializable{
 		this.customerType = customerType;
 	}
 
-	public String getPurchaseAmount() {
+	public Double getPurchaseAmount() {
+		if(purchaseAmount==null){
+			purchaseAmount=0.0;
+		}
 		return purchaseAmount;
 	}
 
-	public void setPurchaseAmount(String purchaseAmount) {
+	public void setPurchaseAmount(Double purchaseAmount) {
 		this.purchaseAmount = purchaseAmount;
 	}
 
+	public Double getSellAmount() {
+		if(sellAmount==null){
+			sellAmount=0.0;
+		}
+		return sellAmount;
+	}
+
+	public void setSellAmount(Double sellAmount) {
+		this.sellAmount = sellAmount;
+	}
+	
 	public FormStorePropExt getFormStorePropExt() {
 		return formStorePropExt;
 	}

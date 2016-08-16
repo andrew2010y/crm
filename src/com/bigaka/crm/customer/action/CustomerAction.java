@@ -36,13 +36,13 @@ import com.bigaka.crm.customer.model.Customer;
 import com.bigaka.crm.customer.model.Customer.RegisterChannel;
 import com.bigaka.crm.customer.model.Customer.RegisterType;
 import com.bigaka.crm.customer.model.CustomerDetail;
+import com.bigaka.crm.customer.model.CustomerListExt;
 import com.bigaka.crm.customer.model.CustomerTag;
 import com.bigaka.crm.customer.service.CustomerDetailService;
 import com.bigaka.crm.customer.service.CustomerService;
 import com.bigaka.crm.customer.service.FormStorePropService;
 import com.bigaka.crm.form.model.FormStorePropExt;
 import com.bigaka.crm.web.model.Store;
-import com.bigaka.crm.web.model.Store.StoreType;
 
 /**
  * 顾客基本信息
@@ -91,12 +91,18 @@ public class CustomerAction{
 	
 	@RequestMapping("/list-customer")
 	public ModelAndView getCustomerPage(
-			//@RequestBody CustomerListExt customerListExt ,Store store
+			 //CustSearchParam param
+			 @RequestBody CustomerListExt customerListExt ,Store store
 			){
 		//List<FormStoreProp> customProp=customerListExt.getCustomPropList();
-		CustSearchParam param=  new CustSearchParam();//customerListExt.getParam();
-		param.setPageNo(1);
-		param.setPageSize(10);
+		//CustSearchParam param=  new CustSearchParam();//customerListExt.getParam();
+		CustSearchParam param= customerListExt.getParam();
+		
+		if(param.getPageSize()==0){
+			param.setPageSize(10);
+		}
+		//param.setPageNo(1);
+		
 		param.setAllCustomerId(0);
 		
 		//list-data
@@ -164,7 +170,7 @@ public class CustomerAction{
 			
 			Integer customerType = customer.getCustomerType();
 			if(customerType!=null&&customerType==1){
-				customer.setPurchaseAmount("10");
+				customer.setPurchaseAmount(10.0);
 			};
 			
 			/*if(customer.getStoreId()==null || customer.getStoreId().equals(store.getId())){//异常为空或选中为当前登录的店面

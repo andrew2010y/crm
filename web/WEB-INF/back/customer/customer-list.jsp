@@ -319,7 +319,8 @@
 								<th width="100px">昵称/手机号</th>
 								<th width="150px">会员类型</th>
 								<th>分红基金</th>
-								<th>积分</th>
+								<th>销售提成</th>
+								<!-- <th>积分</th> -->
 								<th width="160px">
 								加入时间
 									<%-- <span>标签</span><a href="${ctx}/back/tag/list" style="float:right;">前往管理标签</a>

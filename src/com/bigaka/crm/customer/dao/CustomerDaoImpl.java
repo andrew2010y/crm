@@ -252,7 +252,10 @@ public class CustomerDaoImpl implements CustomerDao{
 
 	@Override
 	public Customer getByParentStoreIdAndPhone(Integer parentStoreId, Long phone) {
-		StringBuffer sql = new StringBuffer("select c.customer_id customerId,parent_store_id parentStoreId,store_id storeId,username,open_id openId,state,cd.name,cd.logo,cd.phone,cd.point from customer c,customer_detail cd where cd.customer_id=c.customer_id");
+		StringBuffer sql = new StringBuffer("select c.customer_id customerId,parent_store_id parentStoreId,store_id storeId,username,open_id openId,state,cd.name");
+		
+		sql.append(",cd.logo,cd.phone,cd.point,c.purchase_amount purchaseAmount ")
+		.append(" from customer c,customer_detail cd where cd.customer_id=c.customer_id");
 		sql.append(" and c.parent_store_id = ?");
 		sql.append(" and c.username = ?");
 		
@@ -311,4 +314,14 @@ public class CustomerDaoImpl implements CustomerDao{
 		return handler.getForList(sql.toString(), Customer.class, params.toArray());
 	}
  
+	
+	@Override
+	public boolean updateCustomerPurchaseAmount(Customer cust) {
+		String sql = " update customer set purchase_amount = ?,sell_amount = ? where customer_id = ?";
+		
+		return handler.update(sql, cust.getPurchaseAmount(),
+				cust.getSellAmount(),
+				cust.getCustomerId());
+	}
+
 }

@@ -113,7 +113,13 @@
 		            						<div class="form-group"  id="purchaseAmount2" style="display:none;">
 		            							<label class="search-label inline" for="member_phone">基金额度：</label>10万
 		            						</div>
-		            						</td>	
+		            						</td>
+		            						<td>	
+		            							<div class="form-group inline">
+	                            					<label class="search-label inline">销售人员：</label>
+	                            				 	<input type="text" class="form-control inline" maxlength="11" placeholder="请输入手机号获取提成" name="salePhone" id="salePhone" >
+		                       					</div>
+		            						</td>
 				        				</tr>
 				        			</tbody>
 								</table>

@@ -46,4 +46,6 @@ public interface CustomerDao {
 	List<String> getOpenIdList(Integer storeId);
 	
 	List<Customer> getCustomerBindConn(Integer parentStoreId,List<String> paramList,ThirdSupportKey key);
+
+	boolean updateCustomerPurchaseAmount(Customer cust);
 }
